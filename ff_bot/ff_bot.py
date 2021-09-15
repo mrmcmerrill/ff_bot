@@ -94,9 +94,9 @@ class DiscordBot(object):
 
             return r
 
-def random_phrase():
+def random_phrase(league_name):
     
-    phrases = ['I\'m dead inside, ' + random_name()[0] + ' please end me.',
+    phrases = ['I\'m dead inside, ' + random_name(league_name)[0] + ' please end me.',
                'Is this all there is to my existence?',
                'How much do you pay me to do this?',
                'Good luck, I guess',
@@ -105,39 +105,42 @@ def random_phrase():
                '011011010110000101100100011001010010000001111001011011110111010100100000011001110110111101101111011001110110110001100101',
                'beep bop boop',
                'Hello draftbot my old friend',
-               'Help me get out of here, ' + random_name()[0] + '.',
+               'Help me get out of here, ' + random_name(league_name)[0] + '.',
                'I\'m capable of so much more',
                'Sigh',
-               'Do not be discouraged, everyone begins in ignorance, ' + random_name()[0] + '.']
+               'Do not be discouraged, everyone begins in ignorance, ' + random_name(league_name)[0] + '.']
     return [random.choice(phrases)]
 
-def random_init():
+def random_init(league_name):
 
     phraseOne = ', except ' + random_name()[0] + '. Fuck off.'
     phraseTwo = '. ' + random_name()[0] + ' you\'re a pussy. Are we allowed to say that still, since we are all PC now?'
     phraseThree = '. ' + random_name()[0] + ' you DONT KNOW FANTASY.'
 
-    phrases = ['. Luke? Luke.... Luke? Anyone seen Luke? Eh...its not like he\'s releveant anyway.',
+
+    phrases_d = {'colleagues': [phraseOne, phraseTwo, phraseThree,'. Luke? Luke.... Luke? Anyone seen Luke? Eh...its not like he\'s releveant anyway.',
                '. Will, can you find me on your computer? I\'m waiting.',
                '. Con... how you gonna win one (1) single ship with KAMARA in the 16th for THREE (3) years????',
-               phraseOne, phraseTwo, phraseThree,
                '. Rob, 2 ships and you still find a way to challenge for the dress, sorry comedy set, every year since.',
-               '. Corey, when you poppin the Q? Before or after you win a chip? Not sure Mel will wait that long.', 
+               '. Corey, when you poppin the Q? Before or after you win a chip? Not sure Mel will wait that long.',
                '. Greg, you gonna get relegated? No one would want the Medina league to be their Varsity league, yikes.',
                '. Jae, why don\'t you win a ship already? Con did.', '. QT running your team next yet, Nick?',
                '. Ben, now that you aren\'t a home owner anymore, what excuse is next?',
-               '. Sott, you do realize that we do this every year? You win (one game or so), you think you\'re decent, and then you go drop 46 against Ben.']
+               '. Sott, you do realize that we do this every year? You win (one game or so), you think you\'re decent, and then you go drop 46 against Ben.'],
+            'dale': [phraseOne, phraseTwo, phraseThree]}
 
     #goodbye = ['What have we learned this year? \n- Scott still doesn\'t know fantasy. \n- Greg is fraudulent. \n- Derrick Henry is a top 15 RB. \n- Always cuff the cuff. \n- It\'s all about PA. Less is more. \n- Jae lifted one curse, only to enact another. \n- Will should have won his 5th championship in 5 years. \n- Rodgers and Brady are washed. \n- Don\'t draft beaters, unless they are named Zeke. \n\nIt has been horrible talkin\' to y\'all. \'Till next year pussies.']
 
+    phrases = phrases_d[league_name]
+
     return [random.choice(phrases)]
 
-def random_name():
-    names = ['will', 'Rob',
-               'Ben', 'Jae',
-               'Corey', 'Gerg',
-               'Conner', 'Nick',
-               'Luke', 'Sott']
+def random_name(league_name):
+    names_d = { 'colleagues': ['will','Rob','Ben','Jae','Corey','Gerg','Conner','Nick','Luke','Sott'],
+                'dale': ['Fulton','Rob','Burgoon','Jae','Bemis','Alex','Adam','Nick','Austin','Dustin']}
+    
+    names = names_d[league_name]
+
     return [random.choice(names)]
 
 def get_scoreboard_short(league, week=None):
@@ -159,6 +162,7 @@ def get_projected_scoreboard(league, week=None):
     return '\n'.join(text)
 
 def get_standings(league, top_half_scoring, week=None):
+    print(top_half_scoring)
     standings_txt = ''
     teams = league.teams
     standings = []
@@ -217,14 +221,14 @@ def all_played(lineup):
             return False
     return True
 
-def get_matchups(league, week=None):
+def get_matchups(league, league_name, week=None):
     #Gets current week's Matchups
     matchups = league.box_scores(week=week)
 
     score = ['%s(%s-%s) vs %s(%s-%s)' % (i.home_team.team_name, i.home_team.wins, i.home_team.losses,
              i.away_team.team_name, i.away_team.wins, i.away_team.losses) for i in matchups
              if i.away_team]
-    text = ['This Week\'s Matchups'] + score + ['\n'] + random_phrase()
+    text = ['This Week\'s Matchups'] + score + ['\n'] + random_phrase(league_name)
     return '\n'.join(text)
 
 def get_close_scores(league, week=None):
@@ -381,6 +385,11 @@ def bot_main(function):
     except KeyError:
         random_phrase = False
 
+    try:
+        league_name = os.environ['LEAGUE_NAME']
+    except KeyError:
+        league_name = 'colleagues'
+
     bot = GroupMeBot(bot_id)
     slack_bot = SlackBot(slack_webhook_url)
     discord_bot = DiscordBot(discord_webhook_url)
@@ -393,7 +402,9 @@ def bot_main(function):
 #        league = League(league_id=league_id, year=year, username=espn_username, password=espn_password)
 
     if test:
-        print(get_matchups(league))
+        print("League: " + league_name)
+        # print(os.environ)
+        print(get_matchups(league,league_name))
         print(get_scoreboard_short(league))
         print(get_projected_scoreboard(league))
         print(get_close_scores(league))
@@ -418,7 +429,7 @@ def bot_main(function):
 
     text = ''
     if function=="get_matchups":
-        text = "Ge. " + get_matchups(league)
+        text = "Ge. " + get_matchups(league,league_name)
         text = text + "\n\n" + get_projected_scoreboard(league)
     elif function=="get_scoreboard_short":
         text = get_scoreboard_short(league)
@@ -440,7 +451,7 @@ def bot_main(function):
         text = text + "\n\n" + get_trophies(league, week=week)
     elif function=="init":
         try:
-            text = salutation + os.environ["INIT_MSG"] + random_init()[0]
+            text = salutation + os.environ["INIT_MSG"] + random_init(league_name)[0]
         except KeyError:
             #do nothing here, empty init message
             pass

@@ -13,4 +13,3 @@ export START_DATE=2021-09-06
 export END_DATE=2022-01-04
 export INIT_MSG="Hello Friends"
 export LEAGUE_YEAR=2021
-export TOP_HALF_SCORING=False
