@@ -3,6 +3,7 @@ import json
 import os
 import random
 import datetime
+from operator import itemgetter, attrgetter
 from apscheduler.schedulers.blocking import BlockingScheduler
 from espn_api.football import League
 
@@ -116,14 +117,14 @@ def random_init():
     phraseTwo = '. ' + random_name()[0] + ' you\'re a pussy. Are we allowed to say that still, since we are all PC now?'
     phraseThree = '. ' + random_name()[0] + ' you DONT KNOW FANTASY.'
 
-    phrases = ['Luke? Luke.... Luke? Anyone seen Luke? Eh...its not like he\'s releveant anyway.',
+    phrases = ['. Luke? Luke.... Luke? Anyone seen Luke? Eh...its not like he\'s releveant anyway.',
                '. Will, can you find me on your computer? I\'m waiting.',
                '. Con... how you gonna win one (1) single ship with KAMARA in the 16th for THREE (3) years????',
                phraseOne, phraseTwo, phraseThree,
                '. Rob, 2 ships and you still find a way to challenge for the dress, sorry comedy set, every year since.',
                '. Corey, when you poppin the Q? Before or after you win a chip? Not sure Mel will wait that long.', 
                '. Greg, you gonna get relegated? No one would want the Medina league to be their Varsity league, yikes.',
-               '. Jae, why don\'t you win a ship already? Con did.', 'QT running your team next yet, Nick?',
+               '. Jae, why don\'t you win a ship already? Con did.', '. QT running your team next yet, Nick?',
                '. Ben, now that you aren\'t a home owner anymore, what excuse is next?',
                '. Sott, you do realize that we do this every year? You win (one game or so), you think you\'re decent, and then you go drop 46 against Ben.']
 
@@ -163,11 +164,11 @@ def get_standings(league, top_half_scoring, week=None):
     standings = []
     if not top_half_scoring:
         for t in teams:
-            standings.append((t.wins, t.losses, t.team_name))
+            standings.append((t.wins, t.losses, t.team_name, t.points_for))
 
-        standings = sorted(standings, key=lambda tup: tup[0], reverse=True)
-        standings_txt = [f"{pos + 1}: {team_name} ({wins} - {losses})" for \
-            pos, (wins, losses, team_name) in enumerate(standings)]
+        standings = sorted(standings, key=itemgetter(0,3), reverse=True)
+        standings_txt = [f"{pos + 1}: {team_name} ({wins} - {losses}) (PF: {points_for})" for \
+            pos, (wins, losses, team_name, points_for) in enumerate(standings)]
     else:
         top_half_totals = {t.team_name: 0 for t in teams}
         if not week:
@@ -177,11 +178,11 @@ def get_standings(league, top_half_scoring, week=None):
 
         for t in teams:
             wins = top_half_totals[t.team_name] + t.wins
-            standings.append((wins, t.losses, t.team_name))
+            standings.append((wins, t.losses, t.team_name, t.points_for))
 
-        standings = sorted(standings, key=lambda tup: tup[0], reverse=True)
-        standings_txt = [f"{pos + 1}: {team_name} ({wins} - {losses}) (+{top_half_totals[team_name]})" for \
-            pos, (wins, losses, team_name) in enumerate(standings)]
+        standings = sorted(standings, key=itemgetter(0,3), reverse=True)
+        standings_txt = [f"{pos + 1}: {team_name} ({wins} - {losses}) (PF: {points_for}) (+{top_half_totals[team_name]})" for \
+            pos, (wins, losses, team_name, points_for) in enumerate(standings)]
     text = ["Current Standings:"] + standings_txt
 
     return "\n".join(text)
@@ -391,7 +392,6 @@ def bot_main(function):
 #    if espn_username and espn_password:
 #        league = League(league_id=league_id, year=year, username=espn_username, password=espn_password)
 
-    test = False
     if test:
         print(get_matchups(league))
         print(get_scoreboard_short(league))
@@ -428,11 +428,11 @@ def bot_main(function):
     elif function=="get_close_scores":
         text = "Ge. " + get_close_scores(league)
     elif function=="get_power_rankings":
-        text = "Ga. " + get_power_rankings(league)
+        text = "Ge. " + get_power_rankings(league)
     elif function=="get_trophies":
         text = "Gm. " + get_trophies(league)
     elif function=="get_standings":
-        text = "Ga." + get_standings(league, top_half_scoring)
+        text = "Gm. " + get_standings(league, top_half_scoring)
     elif function=="get_final":
         # on Tuesday we need to get the scores of last week
         week = league.current_week - 1
@@ -440,7 +440,7 @@ def bot_main(function):
         text = text + "\n\n" + get_trophies(league, week=week)
     elif function=="init":
         try:
-            text = salutation + random_init()[1]
+            text = salutation + os.environ["INIT_MSG"] + random_init()[0]
         except KeyError:
             #do nothing here, empty init message
             pass
@@ -486,7 +486,7 @@ if __name__ == '__main__':
     #score update:                       sunday at 4pm, 8pm east coast time.
 
     sched.add_job(bot_main, 'cron', ['get_power_rankings'], id='power_rankings',
-        day_of_week='wed', hour=14, minute=30, start_date=ff_start_date, end_date=ff_end_date,
+        day_of_week='tue', hour=18, minute=30, start_date=ff_start_date, end_date=ff_end_date,
         timezone=my_timezone, replace_existing=True)
     sched.add_job(bot_main, 'cron', ['get_matchups'], id='matchups',
         day_of_week='thu', hour=19, minute=30, start_date=ff_start_date, end_date=ff_end_date,
@@ -498,7 +498,7 @@ if __name__ == '__main__':
         day_of_week='tue', hour=7, minute=30, start_date=ff_start_date, end_date=ff_end_date,
         timezone=my_timezone, replace_existing=True)
     sched.add_job(bot_main, 'cron', ['get_standings'], id='standings',
-        day_of_week='wed', hour=14, minute=30, start_date=ff_start_date, end_date=ff_end_date,
+        day_of_week='wed', hour=7, minute=30, start_date=ff_start_date, end_date=ff_end_date,
         timezone=my_timezone, replace_existing=True)
     sched.add_job(bot_main, 'cron', ['get_scoreboard_short'], id='scoreboard1',
         day_of_week='fri,mon', hour=7, minute=30, start_date=ff_start_date, end_date=ff_end_date,
@@ -509,3 +509,5 @@ if __name__ == '__main__':
 
     print("Ready!")
     sched.start()
+
+

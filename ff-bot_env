@@ -1,8 +1,13 @@
-# test bot 
-export dale_BOT_ID=
-export test_BOT_ID=e04001ed152488ae3a1a034213
+# Dale Earndhart
+export dale_BOT_ID=017fe76fd95052be3b0b7c0a89
+export dale_LEAGUE_ID=
+# The Colleagues
 export colleagues_BOT_ID=2efb788491ed8301d537d294d1
-export LEAGUE_ID=1019976
+export colleagues_LEAGUE_ID=1019976
+# Test
+export test_BOT_ID=e04001ed152488ae3a1a034213
+export test_LEAGUE_ID=1019976
+
 export TIMEZONE=America/New_York
 export START_DATE=2021-09-06
 export END_DATE=2022-01-04
