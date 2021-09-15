@@ -1,0 +1,9 @@
+# test bot 
+# export BOT_ID=e04001ed152488ae3a1a034213
+export BOT_ID=2efb788491ed8301d537d294d1
+export LEAGUE_ID=1019976
+export TIMEZONE=America/New_York
+export START_DATE=2021-09-06
+export END_DATE=2022-01-04
+export INIT_MSG="Hello Friends."
+export LEAGUE_YEAR=2021
