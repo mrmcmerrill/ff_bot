@@ -113,9 +113,9 @@ def random_phrase(league_name):
 
 def random_init(league_name):
 
-    phraseOne = ', except ' + random_name()[0] + '. Fuck off.'
-    phraseTwo = '. ' + random_name()[0] + ' you\'re a pussy. Are we allowed to say that still, since we are all PC now?'
-    phraseThree = '. ' + random_name()[0] + ' you DONT KNOW FANTASY.'
+    phraseOne = ', except ' + random_name(league_name)[0] + '. Fuck off.'
+    phraseTwo = '. ' + random_name(league_name)[0] + ' you\'re a pussy. Are we allowed to say that still, since we are all PC now?'
+    phraseThree = '. ' + random_name(league_name)[0] + ' you DONT KNOW FANTASY.'
 
 
     phrases_d = {'colleagues': [phraseOne, phraseTwo, phraseThree,'. Luke? Luke.... Luke? Anyone seen Luke? Eh...its not like he\'s releveant anyway.',
