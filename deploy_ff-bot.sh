@@ -1,19 +1,36 @@
-environ=$1
+usage() { echo "Usage: $0 [-l colleagues|dale] [-t]" 1>&2; exit 1; }
+
+while getopts "l:t" option; do
+   case $option in
+      l) # Enter an league
+        LEAGUE_NAME=$OPTARG
+        environ=$OPTARG
+        ;;
+      t) # if test is true
+        test="true"
+        ;;
+      *) # display Help
+        usage
+        ;;
+        
+   esac
+done
 
 source ./ff-bot_env
-THIS_BOT_ID="${environ}_BOT_ID"
-THIS_LEAGUE_ID="${environ}_LEAGUE_ID"
 
-if [[ "$environ" == "test" ]]; then
+if [[ "$test" == "true" ]]; then
+  environ="test"
   TEST=True
-  LEAGUE_NAME="$2"
   THIS_LEAGUE_ID="${LEAGUE_NAME}_LEAGUE_ID"
   IMAGE_TAG="test"
 else
+  environ=$LEAGUE_NAME
   TEST=
-  LEAGUE_NAME=$environ
   IMAGE_TAG="latest"
 fi
+
+THIS_BOT_ID="${environ}_BOT_ID"
+THIS_LEAGUE_ID="${LEAGUE_NAME}_LEAGUE_ID"
 
 # Test pointer variables
 # echo $THIS_BOT_ID
@@ -26,8 +43,8 @@ sudo docker run -dit --name ${environ}-rankings-bot \
 	-e "LEAGUE_ID=${!THIS_LEAGUE_ID}" \
 	-e "INIT_MSG=$INIT_MSG" \
 	-e "LEAGUE_YEAR=$LEAGUE_YEAR" \
-   	-e "BOT_ID=${!THIS_BOT_ID}" \
+  -e "BOT_ID=${!THIS_BOT_ID}" \
 	-e "TEST=$TEST" \
 	mchome/ff_bot:$IMAGE_TAG
 
-# env
+#env

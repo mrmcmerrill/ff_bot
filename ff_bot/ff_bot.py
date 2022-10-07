@@ -112,7 +112,7 @@ def random_phrase(league_name):
                'Do I think? Does a submarine swim?',
                '011011010110000101100100011001010010000001111001011011110111010100100000011001110110111101101111011001110110110001100101',
                'beep bop boop',
-               'Hello draftbot my old friend',
+               'Hello RB my old friend',
                'Help me get out of here, ' + random_name(league_name)[0] + '.',
                'I\'m capable of so much more',
                'Sigh',
@@ -122,20 +122,22 @@ def random_phrase(league_name):
 def random_init(league_name):
 
     phraseOne = ', except ' + random_name(league_name)[0] + '. Fuck off.'
-    phraseTwo = '. ' + random_name(league_name)[0] + ' you\'re a pussy. Are we allowed to say that still, since we are all PC now?'
+    phraseTwo = '. ' + random_name(league_name)[0] + ' 🥴'
     phraseThree = '. ' + random_name(league_name)[0] + ' you DONT KNOW FANTASY.'
 
-
-    phrases_d = {'colleagues': [phraseOne, phraseTwo, phraseThree,'. Luke? Luke.... Luke? Anyone seen Luke? Eh...its not like he\'s releveant anyway.',
-               '. Will, can you find me on your computer? I\'m waiting.',
-               '. Con... how you gonna win one (1) single ship with KAMARA in the 16th for THREE (3) years????',
-               '. Rob, 2 ships and you still find a way to challenge for the dress, sorry comedy set, every year since.',
-               '. Corey, when you poppin the Q? Before or after you win a chip? Not sure Mel will wait that long.',
-               '. Greg, you gonna get relegated? No one would want the Medina league to be their Varsity league, yikes.',
-               '. Jae, why don\'t you win a ship already? Con did.', '. QT running your team next yet, Nick?',
-               '. Ben, now that you aren\'t a home owner anymore, what excuse is next?',
-               '. Sott, you do realize that we do this every year? You win (one game or so), you think you\'re decent, and then you go drop 46 against Ben.'],
+    phrases_d = {'colleagues': [phraseOne, phraseTwo, phraseThree],
             'dale': [phraseOne, phraseTwo, phraseThree]}
+
+    # phrases_d = {'colleagues': [phraseOne, phraseTwo, phraseThree,'. Luke? Luke.... Luke? Anyone seen Luke? Eh...its not like he\'s releveant anyway.',
+    #            '. Will, can you find me on your computer? I\'m waiting.',
+    #            '. Con... how you gonna win one (1) single ship with KAMARA in the 16th for THREE (3) years????',
+    #            '. Rob, 2 ships and you still find a way to challenge for the dress, sorry comedy set, every year since.',
+    #            '. Corey, when you poppin the Q? Before or after you win a chip? Not sure Mel will wait that long.',
+    #            '. Greg, you gonna get relegated? No one would want the Medina league to be their Varsity league, yikes.',
+    #            '. Jae, why don\'t you win a ship already? Con did.', '. QT running your team next yet, Nick?',
+    #            '. Ben, now that you aren\'t a home owner anymore, what excuse is next?',
+    #            '. Sott, you do realize that we do this every year? You win (one game or so), you think you\'re decent, and then you go drop 46 against Ben.'],
+    #         'dale': [phraseOne, phraseTwo, phraseThree]}
 
     #goodbye = ['What have we learned this year? \n- Scott still doesn\'t know fantasy. \n- Greg is fraudulent. \n- Derrick Henry is a top 15 RB. \n- Always cuff the cuff. \n- It\'s all about PA. Less is more. \n- Jae lifted one curse, only to enact another. \n- Will should have won his 5th championship in 5 years. \n- Rodgers and Brady are washed. \n- Don\'t draft beaters, unless they are named Zeke. \n\nIt has been horrible talkin\' to y\'all. \'Till next year pussies.']
 
@@ -172,7 +174,6 @@ def get_projected_scoreboard(league, week=None):
 
 
 def get_standings(league, top_half_scoring, week=None):
-    print(top_half_scoring)
     standings_txt = ''
     teams = league.teams
     standings = []
@@ -181,8 +182,9 @@ def get_standings(league, top_half_scoring, week=None):
             standings.append((t.wins, t.losses, t.team_name, t.points_for))
 
         standings = sorted(standings, key=itemgetter(0,3), reverse=True)
-        standings_txt = [f"{pos + 1}: {team_name} ({wins} - {losses}) (PF: {points_for})" for \
+        standings_txt = [f"{pos + 1}: {team_name} ({wins} - {losses}) (PF: {round(points_for, 2)})" for \
             pos, (wins, losses, team_name, points_for) in enumerate(standings)]
+
     else:
         top_half_totals = {t.team_name: 0 for t in teams}
         if not week:
@@ -195,7 +197,7 @@ def get_standings(league, top_half_scoring, week=None):
             standings.append((wins, t.losses, t.team_name, t.points_for))
 
         standings = sorted(standings, key=itemgetter(0,3), reverse=True)
-        standings_txt = [f"{pos + 1}: {team_name} ({wins} - {losses}) (PF: {points_for}) (+{top_half_totals[team_name]})" for \
+        standings_txt = [f"{pos + 1}: {team_name} ({wins} - {losses}) (PF: {round(points_for, 2)}) (+{top_half_totals[team_name]})" for \
             pos, (wins, losses, team_name, points_for) in enumerate(standings)]
 
     text = ["Current Standings:"] + standings_txt
@@ -300,7 +302,7 @@ def get_matchups(league, league_name, week=None):
     #Gets current week's Matchups
     matchups = league.box_scores(week=week)
 
-    score = ['%s(%s-%s) vs %s(%s-%s)' % (i.home_team.team_name, i.home_team.wins, i.home_team.losses,
+    score = ['%s (%s-%s) vs %s (%s-%s)' % (i.home_team.team_name, i.home_team.wins, i.home_team.losses,
                                          i.away_team.team_name, i.away_team.wins, i.away_team.losses) for i in matchups
              if i.away_team]
     text = ['This Week\'s Matchups'] + score + ['\n'] + random_phrase(league_name)
@@ -327,7 +329,10 @@ def get_close_scores(league, week=None):
 def get_waiver_report(league, faab):
     activities = league.recent_activity(50)
     report = []
-    today = date.today().strftime('%Y-%m-%d')
+    #today = date.today().strftime('%Y-%m-%d')
+    today_test_string = '2022-10-05'
+    date_time_test_obj = datetime.strptime(today_test_string, '%Y-%m-%d')
+    today = date_time_test_obj
     text = ''
 
     for activity in activities:
@@ -552,7 +557,7 @@ def bot_main(function):
         espn_s2 = '1'
 
     try:
-        test = os.environ["TEST"]
+        test = str_to_bool(os.environ["TEST"])
     except KeyError:
         test = False
 
@@ -570,6 +575,16 @@ def bot_main(function):
         waiver_report = str_to_bool(os.environ["WAIVER_REPORT"])
     except KeyError:
         waiver_report = False
+    
+    try:
+        weekly_waiver = str_to_bool(os.environ["WEEKLY_WAIVER"])
+    except KeyError:
+        weekly_waiver = False
+        
+    try:
+        monitor_report = str_to_bool(os.environ["MONITOR_REPORT"])
+    except KeyError:
+        monitor_report = False
     
     try:
         league_name = os.environ['LEAGUE_NAME']
@@ -599,11 +614,11 @@ def bot_main(function):
         print(get_projected_scoreboard(league))
         print(get_close_scores(league))
         print(get_power_rankings(league))
-        print(get_scoreboard_short(league))
+        print("Top Half Scoring = " + str(top_half_scoring))
         print(get_standings(league, top_half_scoring))
-        print(get_power_rankings(league))
+        print("Monitor Report = " + str(monitor_report))
         print(get_monitor(league))
-        if waiver_report and swid != '{1}' and espn_s2 != '1':
+        if (waiver_report or weekly_waiver or daily_waiver) and swid != '{1}' and espn_s2 != '1':
             print(get_waiver_report(league, faab))
         function = "get_final"
         # bot.send_message("Testing")
@@ -637,8 +652,6 @@ def bot_main(function):
         text = "Ge. " + get_close_scores(league)
     elif function == "get_power_rankings":
         text = "Ge. " + get_power_rankings(league)
-    # elif function == "get_waiver_report":
-    #     text = "Ge. " + get_waiver_report(league)
     elif function == "get_trophies":
         text = "Gm. " + get_trophies(league)
     elif function == "get_standings":
@@ -693,11 +706,16 @@ if __name__ == '__main__':
         daily_waiver = str_to_bool(os.environ["DAILY_WAIVER"])
     except KeyError:
         daily_waiver = False
+    
+    try:
+        weekly_waiver = str_to_bool(os.environ["WEEKLY_WAIVER"])
+    except KeyError:
+        weekly_waiver = False    
 
     try:
         monitor_report = str_to_bool(os.environ["MONITOR_REPORT"])
     except KeyError:
-        monitor_report = True
+        monitor_report = False
 
     game_timezone = 'America/New_York'
     bot_main("init")
@@ -731,6 +749,11 @@ if __name__ == '__main__':
     if daily_waiver:
         sched.add_job(bot_main, 'cron', ['get_waiver_report'], id='waiver_report',
                       day_of_week='mon, tue, thu, fri, sat, sun', hour=7, minute=31, start_date=ff_start_date, end_date=ff_end_date,
+                      timezone=my_timezone, replace_existing=True)
+    
+    if weekly_waiver:
+            sched.add_job(bot_main, 'cron', ['get_waiver_report'], id='waiver_report',
+                      day_of_week='wed', hour=9, minute=30, start_date=ff_start_date, end_date=ff_end_date,
                       timezone=my_timezone, replace_existing=True)
 
     sched.add_job(bot_main, 'cron', ['get_matchups'], id='matchups',
