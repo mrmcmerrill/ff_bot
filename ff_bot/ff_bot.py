@@ -499,7 +499,8 @@ def power_rankings_yoy(league_id, league_year_start, year, current_week=None):
         power_rankings = league.power_rankings(week=current_week)
         yearly_score = ['%s - %s' % (i[0], i[1].owner) for i in power_rankings
         if i]
-        text = text + '\n' + ['%s Power Rankings' % (yoy_year)] + yearly_score
+        text = ['%s Power Rankings' % (yoy_year)] + yearly_score
+        print(text)
         
         for i in power_rankings:
             team_rankings[i[1].owner][yoy_year] = i[0]
