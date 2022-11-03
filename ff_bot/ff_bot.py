@@ -8,7 +8,6 @@ from operator import itemgetter, attrgetter
 from apscheduler.schedulers.blocking import BlockingScheduler
 from espn_api.football import League
 
-
 class GroupMeException(Exception):
     pass
 
@@ -186,7 +185,7 @@ def get_expected_win_total(league, week=None):
 
 
 def expected_win_record(league, week):
-    # This script gets power rankings, given an already-connected league and a week to look at. Requires espn_api
+    # This script gets expected win record, given an already-connected league and a week to look at. Requires espn_api
 
     # Get what week most recently passed
     lastWeek = league.current_week
@@ -471,6 +470,61 @@ def get_power_rankings(league, week=None):
     text = ['Power Rankings (Playoff %)'] + score
     return '\n'.join(text)
 
+def power_rankings_yoy(league_id, league_year_start, year, current_week=None):
+    
+    total_league_years = year - league_year_start
+    league_years = []
+    
+    for i in range(total_league_years):
+        year_iterator = league_year_start + i
+        league_years.append(year_iterator)
+
+    # initialize the dictionary for the by year and team sorted power rankings
+    team_rankings = {i.owner: {x: float for x in range(league_years)} for i in league.teams} 
+
+    for yoy_year in league_years:
+        league = League(league_id=league_id, year=yoy_year)
+        
+        if yoy_year != year:
+            if yoy_year >= 2022:
+                current_week = 17
+            else:
+                current_week = 16
+        else:    
+            if not current_week:
+                current_week = league.current_week
+            
+        power_rankings = league.power_rankings(week=current_week)
+        yearly_score = ['%s - %s' % (i[0], i[1].owner) for i in power_rankings
+        if i]
+        text = text + '\n' + ['%s Power Rankings' % (yoy_year)] + yearly_score
+        
+        for i in power_rankings:
+            team_rankings[i[1].owner][yoy_year] = i[0]
+            
+    alltime_total = {i: float for i in league.teams}
+    temp_score = float
+    
+    for owner in team_rankings:
+        temp_score = 0.0
+        for year in team_rankings[owner]:
+            temp_score = team_rankings[owner][year]
+            alltime_total[owner] = alltime_total[owner] + temp_score
+    
+    alltime_total_sorted = sorted(alltime_total.items(), key=lambda x: x[owner][1], reverse=True)
+
+    
+    alltime_score = ['%s - %s' % (owner, alltime_total_sorted[owner] ) for owner in alltime_total_sorted if owner]
+    
+    text = ['All Time Power Rankings'] + alltime_score
+    return '\n'.join(text)
+        
+        # power rankings requires an integer value, so this grabs the current week for that
+
+        # Gets current week's power rankings
+        # Using 2 step dominance, as well as a combination of points scored and margin of victory.
+        # It's weighted 80/15/5 respectively
+
 def get_luckys(league, week=None):
     box_scores = league.box_scores(week=week)
     weekly_scores = {}
@@ -624,6 +678,11 @@ def bot_main(function):
     except KeyError:
         year = 2022
 
+    try: 
+        league_year_start = int(os.environ["LEAGUE_YEAR_START"])
+    except KeyError:
+        league_year_start = 2016
+    
     try:
         swid = os.environ["SWID"]
     except KeyError:
@@ -701,6 +760,7 @@ def bot_main(function):
         print(get_projected_scoreboard(league))
         print(get_close_scores(league))
         print(get_power_rankings(league))
+        print(power_rankings_yoy(league, league_year_start, year))
         print("Top Half Scoring = " + str(top_half_scoring) + '\n')
         print(get_standings(league, top_half_scoring))
         print("Monitor Report = " + str(monitor_report) + '\n')
@@ -739,6 +799,8 @@ def bot_main(function):
         text = "Ge. " + get_close_scores(league)
     elif function == "get_power_rankings":
         text = "Ge. " + get_power_rankings(league)
+    # elif function == "yoy_power_rankings":
+    #     text = "Ge. " + yoy_power_rankings(league,year_league_start,year)
     elif function == "get_expected_win_total":
         week = league.current_week - 1
         text = "Ga. " + get_expected_win_total(league, week)
