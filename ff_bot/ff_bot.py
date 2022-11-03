@@ -762,7 +762,7 @@ def bot_main(function):
         print(get_projected_scoreboard(league))
         print(get_close_scores(league))
         print(get_power_rankings(league))
-        print(power_rankings_yoy(league, league_year_start, year))
+        print(power_rankings_yoy(league_id, league_year_start, year))
         print("Top Half Scoring = " + str(top_half_scoring) + '\n')
         print(get_standings(league, top_half_scoring))
         print("Monitor Report = " + str(monitor_report) + '\n')
