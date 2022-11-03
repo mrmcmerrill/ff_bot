@@ -478,6 +478,8 @@ def power_rankings_yoy(league_id, league_year_start, year, current_week=None):
     for i in range(total_league_years):
         year_iterator = league_year_start + i
         league_years.append(year_iterator)
+    
+    league = League(league_id=league_id, year=year)
 
     # initialize the dictionary for the by year and team sorted power rankings
     team_rankings = {i.owner: {x: float for x in range(league_years)} for i in league.teams} 
