@@ -526,7 +526,7 @@ def power_rankings_yoy(league_id, swid, espn_s2, league_year_start, year, curren
             alltime_total[owner] = round(alltime_total[owner] + temp_score, 2)
     
     print(alltime_total)
-    alltime_total_sorted = sorted(alltime_total.items(), key=lambda x: x[owner][1], reverse=True)
+    alltime_total_sorted = sorted(alltime_total.items(), key=lambda x: x[1], reverse=True)
     print(alltime_total_sorted)
     
     alltime_score = ['%s - %s' % (owner, alltime_total_sorted[owner] ) for owner in alltime_total_sorted if owner]
