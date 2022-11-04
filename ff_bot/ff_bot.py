@@ -267,13 +267,13 @@ def yoy_expected_win_record(league_id, swid, espn_s2, league_year_start, year, w
     total_team_expected_sorted = sorted(total_team_expected.items(), key=lambda x: x[1][4], reverse=True)
     print(total_team_expected_sorted)
     
-   # total_team_expected_wins = ['%s-%s-%s (%s) - %s' % (i[1]['wins'], i[1]['losses'], i[1]['ties'], i[1]['pct'], i[0].owner) for i in total_team_expected_sorted if score]
+    total_team_expected_wins = ['%s-%s-%s (%s) - %s' % (i[1]['wins'], i[1]['losses'], i[1]['ties'], i[1]['pct'], i[0].owner) for i in total_team_expected_sorted if i]
     
-    text = ['🏆 All Time Power Rankings %s-%s 🏆' % (league_year_start,year)] + total_team_expected_wins
-    low_score_text = ['🚮 Low Single Season PR 🚮' + '\n' '%s - %s: %s' % (low_score_owner, low_score_year, low_score)]
-    high_score_text = ['🥇 High Single Season PR 🥇' + '\n' + '%s - %s: %s' % (high_score_owner, high_score_year, high_score)]
+    text = ['🏆 All Time Expected Wins %s-%s 🏆' % (league_year_start,year)] + total_team_expected_wins
+    low_score_text = ['🚮 Low Single Season EW 🚮' + '\n' '%s - %s: %s' % (low_score_owner, low_score_year, low_score)]
+    high_score_text = ['🥇 High Single Season EW 🥇' + '\n' + '%s - %s: %s' % (high_score_owner, high_score_year, high_score)]
     return '\n'.join(text + high_score_text + low_score_text)
-    return(total_team_expected_sorted)  
+
 
 def expected_win_record(league, week):
     # This script gets expected win record, given an already-connected league and a week to look at. Requires espn_api
@@ -853,6 +853,7 @@ def bot_main(function):
         print("Expected Win Total \n")
         print(expected_win_record(league, 4))
         print(get_expected_win_total(league, week))
+        print(yoy_expected_win_record(league_id, swid, espn_s2, league_year_start, year))
         print(get_matchups(league,league_name))
         print(get_scoreboard_short(league))
         print(get_projected_scoreboard(league))
