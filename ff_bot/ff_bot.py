@@ -485,10 +485,10 @@ def power_rankings_yoy(league_id, swid, espn_s2, league_year_start, year, curren
     team_rankings = {i.owner.upper().split(" ", 1)[0]: {x: float for x in league_years} for i in league.teams} 
 
     for yoy_year in league_years:
-        print(league_id)
-        print(yoy_year)
-        print(swid)
-        print(espn_s2)
+        # print(league_id)
+        # print(yoy_year)
+        # print(swid)
+        # print(espn_s2)
         
         league = League(league_id=league_id, year=yoy_year, swid=swid, espn_s2=espn_s2)
         
@@ -507,10 +507,10 @@ def power_rankings_yoy(league_id, swid, espn_s2, league_year_start, year, curren
         text = ['%s Power Rankings' % (yoy_year)] + yearly_score
         print(text)
         
-        print("Power Rankings")
-        print(power_rankings)
-        print("Team Rankings")
-        print(team_rankings)
+        # print("Power Rankings")
+        # print(power_rankings)
+        # print("Team Rankings")
+        # print(team_rankings)
         
         for i in power_rankings:
             team_rankings[i[1].owner.upper().split(" ", 1)[0]][yoy_year] = i[0]
@@ -520,12 +520,13 @@ def power_rankings_yoy(league_id, swid, espn_s2, league_year_start, year, curren
     
     for owner in team_rankings:
         temp_score = 0.0
-        for year in team_rankings[owner]:
-            temp_score = team_rankings[owner][year]
-            alltime_total[owner] = alltime_total[owner] + temp_score
+        for year in team_rankings[owner.upper().split(" ", 1)[0]]:
+            temp_score = team_rankings[owner.upper().split(" ", 1)[0]][year]
+            alltime_total[owner.upper().split(" ", 1)[0]] = alltime_total[owner.upper().split(" ", 1)[0]] + temp_score
     
+    print(alltime_total)
     alltime_total_sorted = sorted(alltime_total.items(), key=lambda x: x[owner][1], reverse=True)
-
+    print(alltime_total_sorted)
     
     alltime_score = ['%s - %s' % (owner, alltime_total_sorted[owner] ) for owner in alltime_total_sorted if owner]
     
