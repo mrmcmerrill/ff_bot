@@ -53,7 +53,7 @@ sudo docker run -dit --name ${environ}-rankings-bot \
 	-e "TEST=$TEST" \
   -e "LEAGUE_YEAR_START=${!THIS_LEAGUE_YEAR_START}" \
   -e "SWID=${!THIS_SWID}" \
-  -e "ESPN_S2=${!THIS_ESPN_E2}" \
+  -e "ESPN_S2=${!THIS_ESPN_S2}" \
 	mchome/ff_bot:$IMAGE_TAG
 
 #env
