@@ -11,14 +11,11 @@ from espn_api.football import League
 class GroupMeException(Exception):
     pass
 
-
 class SlackException(Exception):
     pass
 
-
 class DiscordException(Exception):
     pass
-
 
 class GroupMeBot(object):
     # Creates GroupMe Bot to send messages
@@ -46,7 +43,6 @@ class GroupMeBot(object):
 
             return r
 
-
 class SlackBot(object):
     # Creates GroupMe Bot to send messages
     def __init__(self, webhook_url):
@@ -72,7 +68,6 @@ class SlackBot(object):
                 raise SlackException(r.content)
 
             return r
-
 
 class DiscordBot(object):
     # Creates Discord Bot to send messages
@@ -183,7 +178,6 @@ def get_expected_win_total(league, week=None):
 
     return '\n'.join(text)
 
-
 def expected_win_record(league, week):
     # This script gets expected win record, given an already-connected league and a week to look at. Requires espn_api
 
@@ -252,8 +246,7 @@ def expected_win_record(league, week):
     # return in the format that the bot expects
     # recordTextOutput = powerRankingDictSorted[x]
     # return [(powerRankingDictSorted[x], x) for x in powerRankingDictSorted.keys()]
-    return (powerRankingDictSorted)
-   
+    return (powerRankingDictSorted)  
 
 def get_standings(league, top_half_scoring, week=None):
     standings_txt = ''
@@ -286,7 +279,6 @@ def get_standings(league, top_half_scoring, week=None):
 
     return "\n".join(text)
 
-
 def top_half_wins(league, top_half_totals, week):
     box_scores = league.box_scores(week=week)
 
@@ -301,7 +293,6 @@ def top_half_wins(league, top_half_totals, week):
 
     return top_half_totals
 
-
 def get_projected_total(lineup):
     total_projected = 0
     for i in lineup:
@@ -311,7 +302,6 @@ def get_projected_total(lineup):
             else:
                 total_projected += i.projected_points
     return total_projected
-
 
 def all_played(lineup):
     for i in lineup:
@@ -332,7 +322,6 @@ def get_monitor(league):
     else:
         text = ['No Players to Monitor this week. Good Luck!']
     return '\n'.join(text)
-
 
 def scan_roster(lineup, team):
     count = 0
@@ -481,10 +470,10 @@ def power_rankings_yoy(league_id, swid, espn_s2, league_year_start, year, curren
     
     league = League(league_id=league_id, year=year)
 
-    print(league_years)
     # initialize the dictionary for the by year and team sorted power rankings
     team_rankings = {i.owner.upper().split(" ", 1)[0]: {x: float for x in league_years} for i in league.teams} 
 
+    # create yoy dict with each year 
     for yoy_year in league_years:        
         league = League(league_id=league_id, year=yoy_year, swid=swid, espn_s2=espn_s2)
         
@@ -501,35 +490,51 @@ def power_rankings_yoy(league_id, swid, espn_s2, league_year_start, year, curren
         yearly_score = ['%s - %s' % (i[0], i[1].owner.upper().split(" ", 1)[0]) for i in power_rankings
         if i]
         text = ['%s Power Rankings' % (yoy_year)] + yearly_score
-        print(text)
-        
-        # print("Power Rankings")
-        # print(power_rankings)
-        # print("Team Rankings")
-        # print(team_rankings)
         
         for i in power_rankings:
-            team_rankings[i[1].owner.upper().split(" ", 1)[0]][yoy_year] = i[0]
+            team_rankings[i[1].owner.upper().split(" ", 1)[0]][yoy_year] = i[0]          
             
     alltime_total = {i.owner.upper().split(" ", 1)[0]: 0.0 for i in league.teams}
     temp_score = float
     
+    low_score = 9999.9
+    low_score_owner = ''
+    low_score_year = 0
+    high_score = -1.1
+    high_score_owner = ''
+    high_score_year = 0
+    
     for owner in team_rankings:
         temp_score = 0.0
         for year in team_rankings[owner]:
-            temp_score = float(team_rankings[owner][year])
-            
+            if team_rankings[owner][year] > high_score:
+                high_score = team_rankings[owner][year]
+                high_score_owner = owner
+                high_score_year = year
+            elif team_rankings[owner][year] < low_score:
+                low_score = team_rankings[owner][year]
+                low_score_owner = owner
+                low_score_year = year
+                
+            temp_score = float(team_rankings[owner][year])           
             alltime_total[owner] = round(alltime_total[owner] + temp_score, 2)
     
+    print("low")
+    print(low_score)
+    print(low_score_owner)
+    print(low_score_year)
+    print("high")
+    print(high_score)
+    print(high_score_owner)
+    print(high_score_year)
+    
     alltime_total_sorted = sorted(alltime_total.items(), key=lambda x: x[1], reverse=True)
-    
-    alltime_score = ['%s - %s' % (score[0], score[1]) for score in alltime_total_sorted if score]
-    
-    # for i in alltime_total_sorted:
-    #     records += ['%s - %s' % (i[1]['wins'], i[1]['losses'], i[1]['ties'], i[1]['pct'], i[0].team_name,)]
+    alltime_score = ['%s - %s' % (score[1], score[0]) for score in alltime_total_sorted if score]
     
     text = ['All Time Power Rankings %s-%s' % (league_year_start,year)] + alltime_score
-    return '\n'.join(text)
+    low_score_text = ['Low Season PR 🚮:\n %s - %s: %s' % (low_score_owner, low_score_year, low_score)]
+    high_score_text = ['High Season PR 🥇:\n %s - %s: %s' % (high_score_owner, high_score_year, high_score)]
+    return '\n'.join(text + low_score_text + high_score_text)
         
         # power rankings requires an integer value, so this grabs the current week for that
 
@@ -811,8 +816,9 @@ def bot_main(function):
         text = "Ge. " + get_close_scores(league)
     elif function == "get_power_rankings":
         text = "Ge. " + get_power_rankings(league)
-    # elif function == "yoy_power_rankings":
-    #     text = "Ge. " + yoy_power_rankings(league,year_league_start,year)
+    elif function == "yoy_power_rankings":
+        if swid != '{1}' and espn_s2 != '1':
+            text = "Ga. " + power_rankings_yoy(league_id, swid, espn_s2, league_year_start, year)
     elif function == "get_expected_win_total":
         week = league.current_week - 1
         text = "Ga. " + get_expected_win_total(league, week)
@@ -891,47 +897,53 @@ if __name__ == '__main__':
     # power rankings:                     tuesday evening at 6:30pm local time.
     # standings:                          wednesday morning at 7:30am local time.
     # waiver report:                      wednesday morning at 7:30am local time. (optional)
+    # yoy power rankings                  thursday afternoon at 3:00pm east coast time.
     # matchups:                           thursday evening at 7:30pm east coast time.
     # score update:                       friday, monday, and tuesday morning at 7:30am local time.
     # player monitor report:              sunday morning at 7:30am local time.
     # score update:                       sunday at 4pm, 8pm east coast time.
 
     sched.add_job(bot_main, 'cron', ['get_close_scores'], id='close_scores',
-                  day_of_week='mon', hour=18, minute=30, start_date=ff_start_date, end_date=ff_end_date,
-                  timezone=game_timezone, replace_existing=True)
+        day_of_week='mon', hour=18, minute=30, start_date=ff_start_date, end_date=ff_end_date,
+        timezone=game_timezone, replace_existing=True)
     
     sched.add_job(bot_main, 'cron', ['get_final'], id='final',
-                  day_of_week='tue', hour=7, minute=30, start_date=ff_start_date, end_date=ff_end_date,
-                  timezone=my_timezone, replace_existing=True)
+        day_of_week='tue', hour=7, minute=30, start_date=ff_start_date, end_date=ff_end_date,
+        timezone=my_timezone, replace_existing=True)
     
     sched.add_job(bot_main, 'cron', ['get_expected_win_total'], id='expected_wins',
-                  day_of_week='tue', hour=12, minute=00, start_date=ff_start_date, end_date=ff_end_date,
-                  timezone=my_timezone, replace_existing=True)
+        day_of_week='tue', hour=12, minute=00, start_date=ff_start_date, end_date=ff_end_date,
+        timezone=my_timezone, replace_existing=True)
     
     sched.add_job(bot_main, 'cron', ['get_power_rankings'], id='power_rankings',
-                  day_of_week='tue', hour=18, minute=30, start_date=ff_start_date, end_date=ff_end_date,
-                  timezone=my_timezone, replace_existing=True)
+        day_of_week='tue', hour=18, minute=30, start_date=ff_start_date, end_date=ff_end_date,
+        timezone=my_timezone, replace_existing=True)
     
     sched.add_job(bot_main, 'cron', ['get_standings'], id='standings',
-                    day_of_week='wed', hour=7, minute=30, start_date=ff_start_date, end_date=ff_end_date,
-                    timezone=my_timezone, replace_existing=True)
+        day_of_week='wed', hour=7, minute=30, start_date=ff_start_date, end_date=ff_end_date,
+        timezone=my_timezone, replace_existing=True)
+    
     if daily_waiver:
         sched.add_job(bot_main, 'cron', ['get_waiver_report'], id='waiver_report',
-                      day_of_week='mon, tue, thu, fri, sat, sun', hour=7, minute=31, start_date=ff_start_date, end_date=ff_end_date,
-                      timezone=my_timezone, replace_existing=True)
+            day_of_week='mon, tue, thu, fri, sat, sun', hour=7, minute=31, start_date=ff_start_date, end_date=ff_end_date,
+            timezone=my_timezone, replace_existing=True)
     
     if weekly_waiver:
-            sched.add_job(bot_main, 'cron', ['get_waiver_report'], id='waiver_report',
-                      day_of_week='wed', hour=8, minute=30, start_date=ff_start_date, end_date=ff_end_date,
-                      timezone=my_timezone, replace_existing=True)
+        sched.add_job(bot_main, 'cron', ['get_waiver_report'], id='waiver_report',
+            day_of_week='wed', hour=8, minute=30, start_date=ff_start_date, end_date=ff_end_date,
+            timezone=my_timezone, replace_existing=True)
 
+    sched.add_job(bot_main, 'cron', ['power_rankings_yoy'], id='power_rankings_yoy',
+        day_of_week='thu', hour=15, minute=00, start_date=ff_start_date, end_date=ff_end_date,
+        timezone=game_timezone, replace_existing=True)
+    
     sched.add_job(bot_main, 'cron', ['get_matchups'], id='matchups',
-                  day_of_week='thu', hour=19, minute=30, start_date=ff_start_date, end_date=ff_end_date,
-                  timezone=game_timezone, replace_existing=True)
+        day_of_week='thu', hour=19, minute=30, start_date=ff_start_date, end_date=ff_end_date,
+        timezone=game_timezone, replace_existing=True)
     
     sched.add_job(bot_main, 'cron', ['get_scoreboard_short'], id='scoreboard1',
-                  day_of_week='fri,mon', hour=7, minute=30, start_date=ff_start_date, end_date=ff_end_date,
-                  timezone=my_timezone, replace_existing=True)
+        day_of_week='fri,mon', hour=7, minute=30, start_date=ff_start_date, end_date=ff_end_date,
+        timezone=my_timezone, replace_existing=True)
 
     if monitor_report:
         sched.add_job(bot_main, 'cron', ['get_monitor'], id='monitor',
