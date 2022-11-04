@@ -487,9 +487,8 @@ def power_rankings_yoy(league_id, swid, espn_s2, league_year_start, year, curren
                 current_week = league.current_week
             
         power_rankings = league.power_rankings(week=current_week)
-        yearly_score = ['%s - %s' % (i[0], i[1].owner.upper().split(" ", 1)[0]) for i in power_rankings
-        if i]
-        text = ['%s Power Rankings' % (yoy_year)] + yearly_score
+        # yearly_score = ['%s - %s' % (i[0], i[1].owner.upper().split(" ", 1)[0]) for i in power_rankings if i]
+        # text = ['%s Power Rankings' % (yoy_year)] + yearly_score
         
         for i in power_rankings:
             team_rankings[i[1].owner.upper().split(" ", 1)[0]][yoy_year] = i[0]          
@@ -519,22 +518,13 @@ def power_rankings_yoy(league_id, swid, espn_s2, league_year_start, year, curren
             temp_score = float(team_rankings[owner][year])           
             alltime_total[owner] = round(alltime_total[owner] + temp_score, 2)
     
-    print("low")
-    print(low_score)
-    print(low_score_owner)
-    print(low_score_year)
-    print("high")
-    print(high_score)
-    print(high_score_owner)
-    print(high_score_year)
-    
     alltime_total_sorted = sorted(alltime_total.items(), key=lambda x: x[1], reverse=True)
     alltime_score = ['%s - %s' % (score[1], score[0]) for score in alltime_total_sorted if score]
     
-    text = ['All Time Power Rankings %s-%s' % (league_year_start,year)] + alltime_score
-    low_score_text = ['🚮 Low Single Season PR 🚮:\n %s - %s: %s' % (low_score_owner, low_score_year, low_score)]
-    high_score_text = ['🥇 High Single Season PR 🥇:\n %s - %s: %s' % (high_score_owner, high_score_year, high_score)]
-    return '\n'.join(text + low_score_text + high_score_text)
+    text = ['🏆 All Time Power Rankings %s-%s 🏆' % (league_year_start,year)] + alltime_score
+    low_score_text = ['🚮 Low Single Season PR 🚮' + '\n' '%s - %s: %s' % (low_score_owner, low_score_year, low_score)]
+    high_score_text = ['🥇 High Single Season PR 🥇' + '\n' + '%s - %s: %s' % (high_score_owner, high_score_year, high_score)]
+    return '\n'.join(text + high_score_text + low_score_text)
 
 def get_luckys(league, week=None):
     box_scores = league.box_scores(week=week)
