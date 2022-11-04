@@ -241,19 +241,9 @@ export WEEKLY_WAIVER=True
 
 [deploy-ff_bot script](deploy-ff_bot.sh)
 
-With Docker:
-```bash
-
-cd ff_bot
-
-docker build -t ff_bot .
-```
-
-Without Docker:
-
 ```bash
 localhost$ cd ff_bot
-localhost$ python3 setup.py install
+localhost$ docker build -t ff_bot:test .
 ```
 
 ### Environment Variables

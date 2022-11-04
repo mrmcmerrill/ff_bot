@@ -21,7 +21,7 @@ setup(
 
     tests_require=['nose', 'requests_mock'],
 
-    url='https://github.com/dtcarls/ff_bot',
+    url='https://github.com/mrmcmerrill/ff_bot',
 
     classifiers=[
         'Natural Language :: English',
