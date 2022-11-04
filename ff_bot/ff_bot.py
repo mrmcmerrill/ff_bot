@@ -515,7 +515,7 @@ def power_rankings_yoy(league_id, swid, espn_s2, league_year_start, year, curren
         for i in power_rankings:
             team_rankings[i[1].owner.upper().split(" ", 1)[0]][yoy_year] = i[0]
             
-    alltime_total = {i.owner.upper().split(" ", 1)[0]: float for i in league.teams}
+    alltime_total = {i.owner.upper().split(" ", 1)[0]: 0.0 for i in league.teams}
     temp_score = float
     
     for owner in team_rankings:
