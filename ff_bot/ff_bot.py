@@ -193,17 +193,16 @@ def yoy_expected_win_record(league_id, swid, espn_s2, league_year_start, year):
     year_expected_dict = {i.owner.upper().split(" ", 1)[0]: {x: {'wins': int, 'losses': int, 'ties': int, 'pct': float} for x in league_years} for i in league.teams} 
     
     for yoy_year in league_years:        
-        league = League(league_id=league_id, year=yoy_year, swid=swid, espn_s2=espn_s2)
-        
         if yoy_year != year:
             if yoy_year >= 2022:
-                current_week = 17
+                current_week = 15
             else:
-                current_week = 16
+                current_week = 14
         else:    
             if not current_week:
                 current_week = league.current_week - 1
-    
+                
+        league = League(league_id=league_id, year=yoy_year, swid=swid, espn_s2=espn_s2)   
         temp_expected = expected_win_record(league, current_week)
         
         for team in temp_expected:
@@ -263,7 +262,7 @@ def yoy_expected_win_record(league_id, swid, espn_s2, league_year_start, year):
     total_team_expected_sorted = sorted(total_team_expected.items(), key=lambda x: x[1]['wins'], reverse=True)
     print(total_team_expected_sorted)
     
-    total_team_expected_wins = ['%s-%s-%s (%s) - %s' % (i[1]['wins'], i[1]['losses'], i[1]['ties'], i[1]['pct'], i[0].owner) for i in total_team_expected_sorted if i]
+    total_team_expected_wins = ['%s-%s-%s (%s) - %s' % (i[1]['wins'], i[1]['losses'], i[1]['ties'], i[1]['pct'], i[0]) for i in total_team_expected_sorted if i]
     
     text = ['🏆 All Time Expected Wins %s-%s 🏆' % (league_year_start,year)] + total_team_expected_wins
     low_score_text = ['🚮 Low Single Season EW 🚮' + '\n' '%s - %s: %s' % (low_score_owner, low_score_year, low_score)]
