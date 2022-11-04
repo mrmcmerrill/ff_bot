@@ -198,9 +198,9 @@ def yoy_expected_win_record(league_id, swid, espn_s2, league_year_start, year):
         
         if yoy_year != year:
             if yoy_year >= 2022:
-                current_week = 16
-            else:
                 current_week = 15
+            else:
+                current_week = 14
         else:    
             if not current_week:
                 current_week = league.current_week - 1
