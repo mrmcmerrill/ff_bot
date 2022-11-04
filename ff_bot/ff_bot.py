@@ -236,8 +236,8 @@ def yoy_expected_win_record(league_id, swid, espn_s2, league_year_start, year):
             temp_wins = int(year_expected_dict[owner][year]['wins'])
             temp_losses = int(year_expected_dict[owner][year]['losses'])
             temp_ties = int(year_expected_dict[owner][year]['ties'])
-            temp_total_opps = total_team_expected[owner]['wins'] + total_team_expected[owner]['losses'] + total_team_expected[owner]['ties']
-            temp_pct = round(total_team_expected[owner]['wins'] / temp_total_opps, 3)
+            temp_opps = temp_wins + temp_losses + temp_ties
+            temp_pct = round(temp_wins / temp_opps, 3)
             
             if temp_wins > high_score:
                 high_score = temp_wins
@@ -253,7 +253,10 @@ def yoy_expected_win_record(league_id, swid, espn_s2, league_year_start, year):
             total_team_expected[owner]['wins'] = total_team_expected[owner]['wins'] + temp_wins
             total_team_expected[owner]['losses'] = total_team_expected[owner]['losses'] + temp_losses
             total_team_expected[owner]['ties'] = total_team_expected[owner]['ties'] + temp_ties
-            total_team_expected[owner]['pct'] = '{:.3f}'.format(temp_pct).lstrip('0')
+            
+            temp_total_opps = total_team_expected[owner]['wins'] + total_team_expected[owner]['losses'] + total_team_expected[owner]['ties']
+            temp_total_pct = round(total_team_expected[owner]['wins'] / temp_total_opps, 3)
+            total_team_expected[owner]['pct'] = '{:.3f}'.format(temp_total_pct).lstrip('0')
     
     print(total_team_expected)
     
