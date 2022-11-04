@@ -23,6 +23,8 @@ if [[ "$test" == "true" ]]; then
   TEST=True
   THIS_LEAGUE_ID="${LEAGUE_NAME}_LEAGUE_ID"
   THIS_LEAGUE_YEAR_START="${LEAGUE_NAME}_LEAGUE_YEAR_START"
+  THIS_SWID="${LEAGUE_NAME}_SWID"
+  THIS_ESPN_S2="${LEAGUE_NAME}_ESPN_S2"
   IMAGE_TAG="test"
 else
   environ=$LEAGUE_NAME
@@ -33,6 +35,8 @@ fi
 THIS_BOT_ID="${environ}_BOT_ID"
 THIS_LEAGUE_ID="${LEAGUE_NAME}_LEAGUE_ID"
 THIS_LEAGUE_YEAR_START="${LEAGUE_NAME}_LEAGUE_YEAR_START"
+THIS_SWID="${LEAGUE_NAME}_SWID"
+THIS_ESPN_S2="${LEAGUE_NAME}_ESPN_S2"
 
 # Test pointer variables
 # echo $THIS_BOT_ID
@@ -48,6 +52,8 @@ sudo docker run -dit --name ${environ}-rankings-bot \
   -e "BOT_ID=${!THIS_BOT_ID}" \
 	-e "TEST=$TEST" \
   -e "LEAGUE_YEAR_START=${!THIS_LEAGUE_YEAR_START}" \
+  -e "SWID=${!THIS_SWID}" \
+  -e "ESPN_S2=${!THIS_ESPN_E2}"
 	mchome/ff_bot:$IMAGE_TAG
 
 #env

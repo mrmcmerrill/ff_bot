@@ -470,7 +470,7 @@ def get_power_rankings(league, week=None):
     text = ['Power Rankings (Playoff %)'] + score
     return '\n'.join(text)
 
-def power_rankings_yoy(league_id, league_year_start, year, current_week=None):
+def power_rankings_yoy(league_id, swid, espn_s2, league_year_start, year, current_week=None):
     
     total_league_years = year - league_year_start
     league_years = []
@@ -485,7 +485,7 @@ def power_rankings_yoy(league_id, league_year_start, year, current_week=None):
     team_rankings = {i.owner.upper().split(" ", 1)[0]: {x: float for x in league_years} for i in league.teams} 
 
     for yoy_year in league_years:
-        league = League(league_id=league_id, year=yoy_year)
+        league = League(league_id=league_id, year=yoy_year, swid=swid, espn_s2=espn_s2)
         
         if yoy_year != year:
             if yoy_year >= 2022:
@@ -768,7 +768,7 @@ def bot_main(function):
         print(get_projected_scoreboard(league))
         print(get_close_scores(league))
         print(get_power_rankings(league))
-        print(power_rankings_yoy(league_id, league_year_start, year))
+        print(power_rankings_yoy(league_id, swid, espn_s2, league_year_start, year))
         print("Top Half Scoring = " + str(top_half_scoring) + '\n')
         print(get_standings(league, top_half_scoring))
         print("Monitor Report = " + str(monitor_report) + '\n')
