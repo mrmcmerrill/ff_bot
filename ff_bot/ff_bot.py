@@ -236,25 +236,23 @@ def yoy_expected_win_record(league_id, swid, espn_s2, league_year_start, year):
             temp_wins = int(year_expected_dict[owner][year]['wins'])
             temp_losses = int(year_expected_dict[owner][year]['losses'])
             temp_ties = int(year_expected_dict[owner][year]['ties'])
+            temp_total_opps = total_team_expected[owner]['wins'] + total_team_expected[owner]['losses'] + total_team_expected[owner]['ties']
+            temp_pct = round(total_team_expected[owner]['wins'] / temp_total_opps, 3)
             
             if temp_wins > high_score:
                 high_score = temp_wins
-                high_score_out = ['%s-%s-%s (%s)' % (temp_wins, temp_losses, temp_ties, temp_pct)]
+                high_score_out = ['%s-%s-%s (%s)' % (temp_wins, temp_losses, temp_ties, '{:.3f}'.format(temp_pct).lstrip('0'))]
                 high_score_owner = str(owner)
                 high_score_year = str(year)
             elif temp_wins < low_score:
                 low_score = temp_wins
-                low_score_out = ['%s-%s-%s (%s)' % (temp_wins, temp_losses, temp_ties, temp_pct)]
+                low_score_out = ['%s-%s-%s (%s)' % (temp_wins, temp_losses, temp_ties, '{:.3f}'.format(temp_pct).lstrip('0'))]
                 low_score_owner = str(owner)
                 low_score_year = str(year)
                        
             total_team_expected[owner]['wins'] = total_team_expected[owner]['wins'] + temp_wins
             total_team_expected[owner]['losses'] = total_team_expected[owner]['losses'] + temp_losses
             total_team_expected[owner]['ties'] = total_team_expected[owner]['ties'] + temp_ties
-            
-            temp_total_opps = total_team_expected[owner]['wins'] + total_team_expected[owner]['losses'] + total_team_expected[owner]['ties']
-            temp_pct = round(total_team_expected[owner]['wins'] / temp_total_opps, 3)
-     
             total_team_expected[owner]['pct'] = '{:.3f}'.format(temp_pct).lstrip('0')
     
     print(total_team_expected)
