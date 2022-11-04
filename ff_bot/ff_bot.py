@@ -475,21 +475,17 @@ def power_rankings_yoy(league_id, swid, espn_s2, league_year_start, year, curren
     total_league_years = year - league_year_start
     league_years = []
     
-    for i in range(total_league_years):
+    for i in range(total_league_years+1):
         year_iterator = league_year_start + i
         league_years.append(year_iterator)
     
     league = League(league_id=league_id, year=year)
 
+    print(league_years)
     # initialize the dictionary for the by year and team sorted power rankings
     team_rankings = {i.owner.upper().split(" ", 1)[0]: {x: float for x in league_years} for i in league.teams} 
 
-    for yoy_year in league_years:
-        # print(league_id)
-        # print(yoy_year)
-        # print(swid)
-        # print(espn_s2)
-        
+    for yoy_year in league_years:        
         league = League(league_id=league_id, year=yoy_year, swid=swid, espn_s2=espn_s2)
         
         if yoy_year != year:
@@ -525,13 +521,14 @@ def power_rankings_yoy(league_id, swid, espn_s2, league_year_start, year, curren
             
             alltime_total[owner] = round(alltime_total[owner] + temp_score, 2)
     
-    print(alltime_total)
     alltime_total_sorted = sorted(alltime_total.items(), key=lambda x: x[1], reverse=True)
-    print(alltime_total_sorted)
     
-    alltime_score = ['%s - %s' % (owner, alltime_total_sorted[owner] ) for owner in alltime_total_sorted if owner]
+    alltime_score = ['%s - %s' % (score[0], score[1]) for score in alltime_total_sorted if score]
     
-    text = ['All Time Power Rankings'] + alltime_score
+    # for i in alltime_total_sorted:
+    #     records += ['%s - %s' % (i[1]['wins'], i[1]['losses'], i[1]['ties'], i[1]['pct'], i[0].team_name,)]
+    
+    text = ['All Time Power Rankings %s-%s' % (league_year_start,year)] + alltime_score
     return '\n'.join(text)
         
         # power rankings requires an integer value, so this grabs the current week for that
