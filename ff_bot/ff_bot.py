@@ -507,12 +507,12 @@ def power_rankings_yoy(league_id, swid, espn_s2, league_year_start, year, curren
     for owner in team_rankings:
         temp_score = 0.0
         for year in team_rankings[owner]:
-            if team_rankings[owner][year] > high_score:
-                high_score = team_rankings[owner][year]
+            if float(team_rankings[owner][year]) > high_score:
+                high_score = float(team_rankings[owner][year])
                 high_score_owner = owner
                 high_score_year = year
-            elif team_rankings[owner][year] < low_score:
-                low_score = team_rankings[owner][year]
+            elif float(team_rankings[owner][year]) < low_score:
+                low_score = float(team_rankings[owner][year])
                 low_score_owner = owner
                 low_score_year = year
                 
@@ -532,15 +532,9 @@ def power_rankings_yoy(league_id, swid, espn_s2, league_year_start, year, curren
     alltime_score = ['%s - %s' % (score[1], score[0]) for score in alltime_total_sorted if score]
     
     text = ['All Time Power Rankings %s-%s' % (league_year_start,year)] + alltime_score
-    low_score_text = ['Low Season PR 🚮:\n %s - %s: %s' % (low_score_owner, low_score_year, low_score)]
-    high_score_text = ['High Season PR 🥇:\n %s - %s: %s' % (high_score_owner, high_score_year, high_score)]
+    low_score_text = ['🚮 Low Single Season PR 🚮:\n %s - %s: %s' % (low_score_owner, low_score_year, low_score)]
+    high_score_text = ['🥇 High Single Season PR 🥇:\n %s - %s: %s' % (high_score_owner, high_score_year, high_score)]
     return '\n'.join(text + low_score_text + high_score_text)
-        
-        # power rankings requires an integer value, so this grabs the current week for that
-
-        # Gets current week's power rankings
-        # Using 2 step dominance, as well as a combination of points scored and margin of victory.
-        # It's weighted 80/15/5 respectively
 
 def get_luckys(league, week=None):
     box_scores = league.box_scores(week=week)
