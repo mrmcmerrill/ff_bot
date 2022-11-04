@@ -853,7 +853,7 @@ def bot_main(function):
         print("Expected Win Total \n")
         print(expected_win_record(league, 4))
         print(get_expected_win_total(league, week))
-        print(yoy_expected_win_record(league_id, swid, espn_s2, league_year_start, year))
+        print(yoy_expected_win_record(league_id, swid, espn_s2, 2019, year))
         print(get_matchups(league,league_name))
         print(get_scoreboard_short(league))
         print(get_projected_scoreboard(league))
