@@ -203,7 +203,7 @@ def yoy_expected_win_record(league_id, swid, espn_s2, league_year_start, year):
                 current_week = 15
         else:    
             if not current_week:
-                current_week = league.current_week
+                current_week = league.current_week - 1
                 
         temp_expected = expected_win_record(league, current_week)
         
