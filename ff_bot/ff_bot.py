@@ -193,7 +193,7 @@ def yoy_expected_win_record(league_id, swid, espn_s2, league_year_start, year):
     year_expected_dict = {i.owner.upper().split(" ", 1)[0]: {x: {'wins': int, 'losses': int, 'ties': int, 'pct': float} for x in league_years} for i in league.teams} 
     
     for yoy_year in league_years:
-        league = League(league_id=league_id, year=year, swid=swid, espn_s2=espn_s2) 
+        league = League(league_id=league_id, year=yoy_year, swid=swid, espn_s2=espn_s2) 
         current_week = None
         
         if yoy_year != year:
@@ -846,7 +846,7 @@ def bot_main(function):
         print("League: " + league_name)
         # print(os.environ)
         print("Expected Win Total \n")
-        print(expected_win_record(league, 4))
+        print(expected_win_record(league, 9))
         print(get_expected_win_total(league, week))
         print(yoy_expected_win_record(league_id, swid, espn_s2, 2019, year))
         print(get_matchups(league,league_name))
