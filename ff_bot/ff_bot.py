@@ -485,6 +485,11 @@ def power_rankings_yoy(league_id, swid, espn_s2, league_year_start, year, curren
     team_rankings = {i.owner.upper().split(" ", 1)[0]: {x: float for x in league_years} for i in league.teams} 
 
     for yoy_year in league_years:
+        print(league_id)
+        print(yoy_year)
+        print(swid)
+        print(espn_s2)
+        
         league = League(league_id=league_id, year=yoy_year, swid=swid, espn_s2=espn_s2)
         
         if yoy_year != year:
