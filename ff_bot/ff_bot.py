@@ -265,9 +265,9 @@ def yoy_expected_win_record(league_id, swid, espn_s2, league_year_start, year):
     
     total_team_expected_wins = ['%s-%s-%s (%s) - %s' % (i[1]['wins'], i[1]['losses'], i[1]['ties'], i[1]['pct'], i[0]) for i in total_team_expected_sorted if i]
     
-    text = ['🏆 All Time Expected Wins %s-%s 🏆' % (league_year_start,year)] + total_team_expected_wins
+    text = ['🏆 All-Time Expected Wins %s-%s 🏆' % (league_year_start, year)] + total_team_expected_wins
     low_score_text = ['🚮 Low Single Season Exp Wins 🚮' + '\n' '%s - %s: %s' % (low_score_owner, low_score_year, low_score_out)]
-    high_score_text = ['🥇 High Single Season Exp Wins 🥇' + '\n' + '%s - %s: %s' % (high_score_owner, high_score_year, high_score_out)]
+    high_score_text = ['\n🥇 High Single Season Exp Wins 🥇' + '\n' + '%s - %s: %s' % (high_score_owner, high_score_year, high_score_out)]
     return '\n'.join(text + high_score_text + low_score_text)
 
 
