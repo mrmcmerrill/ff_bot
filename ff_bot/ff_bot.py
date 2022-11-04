@@ -241,12 +241,12 @@ def yoy_expected_win_record(league_id, swid, espn_s2, league_year_start, year):
             
             if temp_wins > high_score:
                 high_score = temp_wins
-                high_score_out = ['%s-%s-%s (%s)' % (temp_wins, temp_losses, temp_ties, '{:.3f}'.format(temp_pct).lstrip('0'))]
+                high_score_out = '%s-%s-%s (%s)' % (temp_wins, temp_losses, temp_ties, '{:.3f}'.format(temp_pct).lstrip('0'))
                 high_score_owner = str(owner)
                 high_score_year = str(year)
             elif temp_wins < low_score:
                 low_score = temp_wins
-                low_score_out = ['%s-%s-%s (%s)' % (temp_wins, temp_losses, temp_ties, '{:.3f}'.format(temp_pct).lstrip('0'))]
+                low_score_out = '%s-%s-%s (%s)' % (temp_wins, temp_losses, temp_ties, '{:.3f}'.format(temp_pct).lstrip('0'))
                 low_score_owner = str(owner)
                 low_score_year = str(year)
                        
