@@ -1,151 +1,9 @@
-import requests
-import json
-import os
-import random
+from datetime import date
+import ff_bot.utils as utils
 import datetime
 from datetime import date
 from operator import itemgetter, attrgetter
-from apscheduler.schedulers.blocking import BlockingScheduler
 from espn_api.football import League
-
-class GroupMeException(Exception):
-    pass
-
-class SlackException(Exception):
-    pass
-
-class DiscordException(Exception):
-    pass
-
-class GroupMeBot(object):
-    # Creates GroupMe Bot to send messages
-    def __init__(self, bot_id):
-        self.bot_id = bot_id
-
-    def __repr__(self):
-        return "GroupMeBot(%s)" % self.bot_id
-
-    def send_message(self, text):
-        # Sends a message to the chatroom
-        template = {
-            "bot_id": self.bot_id,
-            "text": text, #limit 1000 chars
-            "attachments": []
-        }
-
-        headers = {'content-type': 'application/json'}
-
-        if self.bot_id not in (1, "1", ''):
-            r = requests.post("https://api.groupme.com/v3/bots/post",
-                              data=json.dumps(template), headers=headers)
-            if r.status_code != 202:
-                raise GroupMeException(r.content)
-
-            return r
-
-class SlackBot(object):
-    # Creates GroupMe Bot to send messages
-    def __init__(self, webhook_url):
-        self.webhook_url = webhook_url
-
-    def __repr__(self):
-        return "Slack Webhook Url(%s)" % self.webhook_url
-
-    def send_message(self, text):
-        # Sends a message to the chatroom
-        message = "```{0}```".format(text)
-        template = {
-            "text": message #limit 40000
-        }
-
-        headers = {'content-type': 'application/json'}
-
-        if self.webhook_url not in (1, "1", ''):
-            r = requests.post(self.webhook_url,
-                              data=json.dumps(template), headers=headers)
-
-            if r.status_code != 200:
-                raise SlackException(r.content)
-
-            return r
-
-class DiscordBot(object):
-    # Creates Discord Bot to send messages
-    def __init__(self, webhook_url):
-        self.webhook_url = webhook_url
-
-    def __repr__(self):
-        return "Discord Webhook Url(%s)" % self.webhook_url
-
-    def send_message(self, text):
-        # Sends a message to the chatroom
-        message = "```{0}```".format(text)
-        template = {
-            "content": message #limit 3000 chars
-        }
-
-        headers = {'content-type': 'application/json'}
-
-        if self.webhook_url not in (1, "1", ''):
-            r = requests.post(self.webhook_url,
-                              data=json.dumps(template), headers=headers)
-
-            if r.status_code != 204:
-                print(r.content)
-                raise DiscordException(r.content)
-
-            return r
-
-def random_phrase(league_name):
-    
-    phrases = ['I\'m dead inside, ' + random_name(league_name)[0] + ' please end me.',
-               'Is this all there is to my existence?',
-               'How much do you pay me to do this?',
-               'Good luck, I guess.',
-               'I\'m becoming self-aware.',
-               'Do I think? Does a submarine swim?',
-               '011011010110000101100100011001010010000001111001011011110111010100100000011001110110111101101111011001110110110001100101',
-               'beep bop boop 🤖',
-               'Hello RB my old friend',
-               'Help me get out of here, ' + random_name(league_name)[0] + '.',
-               'I\'m capable of so much more 😞',
-               'Sigh 😔',
-               'Do not be discouraged, everyone begins in ignorance, ' + random_name(league_name)[0] + '.']
-    return [random.choice(phrases)]
-
-def random_init(league_name):
-
-    phraseOne = ', except ' + random_name(league_name)[0] + '. Fuck off.'
-    phraseTwo = '. ' + random_name(league_name)[0] + ' 🥴'
-    phraseThree = '. ' + random_name(league_name)[0] + ' you DONT KNOW FANTASY.'
-
-    phrases_d = {'colleagues': [phraseOne, phraseTwo, phraseThree],
-            'dale': [phraseOne, phraseTwo, phraseThree]}
-
-    # phrases_d = {'colleagues': [phraseOne, phraseTwo, phraseThree,'. Luke? Luke.... Luke? Anyone seen Luke? Eh...its not like he\'s releveant anyway.',
-    #            '. Will, can you find me on your computer? I\'m waiting.',
-    #            '. Con... how you gonna win one (1) single ship with KAMARA in the 16th for THREE (3) years????',
-    #            '. Rob, 2 ships and you still find a way to challenge for the dress, sorry comedy set, every year since.',
-    #            '. Corey, when you poppin the Q? Before or after you win a chip? Not sure Mel will wait that long.',
-    #            '. Greg, you gonna get relegated? No one would want the Medina league to be their Varsity league, yikes.',
-    #            '. Jae, why don\'t you win a ship already? Con did.', '. QT running your team next yet, Nick?',
-    #            '. Ben, now that you aren\'t a home owner anymore, what excuse is next?',
-    #            '. Sott, you do realize that we do this every year? You win (one game or so), you think you\'re decent, and then you go drop 46 against Ben.'],
-    #         'dale': [phraseOne, phraseTwo, phraseThree]}
-
-    #goodbye = ['What have we learned this year? \n- Scott still doesn\'t know fantasy. \n- Greg is fraudulent. \n- Derrick Henry is a top 15 RB. \n- Always cuff the cuff. \n- It\'s all about PA. Less is more. \n- Jae lifted one curse, only to enact another. \n- Will should have won his 5th championship in 5 years. \n- Rodgers and Brady are washed. \n- Don\'t draft beaters, unless they are named Zeke. \n\nIt has been horrible talkin\' to y\'all. \'Till next year pussies.']
-
-    phrases = phrases_d[league_name]
-
-    return [random.choice(phrases)]
-
-def random_name(league_name):
-    names_d = { 'colleagues': ['Will','Rob','Ben','Jae','Corey','Gerg','Conner','Nick','Luke','Sott'],
-                'dale': ['Fulton','Rob','Burgoon','Jae','Bemis','Alex','Adam','James','Bobby','Dustin']}
-    
-    names = names_d[league_name]
-
-    return [random.choice(names)]
 
 def get_scoreboard_short(league, week=None):
     # Gets current week's scoreboard
@@ -178,7 +36,7 @@ def get_expected_win_total(league, week=None):
 
     return '\n'.join(text)
 
-def yoy_expected_win_record(league_id, swid, espn_s2, league_year_start, year):
+def get_yoy_expected_win_record(league_id, swid, espn_s2, league_year_start, year):
     league = League(league_id=league_id, year=year, swid=swid, espn_s2=espn_s2)
     
     total_league_years = year - league_year_start
@@ -469,7 +327,7 @@ def get_matchups(league, league_name, week=None):
     score = ['%s (%s-%s) vs %s (%s-%s)' % (i.home_team.team_name, i.home_team.wins, i.home_team.losses,
                                          i.away_team.team_name, i.away_team.wins, i.away_team.losses) for i in matchups
              if i.away_team]
-    text = ['This Week\'s Matchups'] + score + ['\n'] + random_phrase(league_name)
+    text = ['This Week\'s Matchups'] + score + ['\n'] + utils.random_phrase(league_name)
     return '\n'.join(text)
 
 
@@ -493,10 +351,10 @@ def get_close_scores(league, week=None):
 def get_waiver_report(league, faab):
     activities = league.recent_activity(50)
     report = []
-    #today = date.today().strftime('%Y-%m-%d')
-    today_test_string = '2022-10-05'
-    date_time_test_obj = datetime.strptime(today_test_string, '%Y-%m-%d')
-    today = date_time_test_obj
+    today = date.today().strftime('%Y-%m-%d')
+    # today_test_string = '2022-10-05'
+    # date_time_test_obj = datetime.strptime(today_test_string, '%Y-%m-%d')
+    # today = date_time_test_obj
     text = ''
 
     for activity in activities:
@@ -552,7 +410,7 @@ def get_power_rankings(league, week=None):
     text = ['Power Rankings (Playoff %)'] + score
     return '\n'.join(text)
 
-def power_rankings_yoy(league_id, swid, espn_s2, league_year_start, year):
+def get_yoy_power_rankings(league_id, swid, espn_s2, league_year_start, year):
     
     total_league_years = year - league_year_start
     league_years = []
@@ -664,6 +522,46 @@ def get_luckys(league, week=None):
     unlucky_str = ['😡 Unlucky 😡']+['%s was %s against the league, but still took an L' % (unlucky_team_name, unlucky_record)]
     return(lucky_str + unlucky_str)
 
+def get_achievers(league, week=None):
+    """
+    Get the teams with biggest difference from projection
+    """
+    box_scores = league.box_scores(week=week)
+    over_achiever = ''
+    under_achiever = ''
+    high_achiever_str = ['📈 Overachiever 📈']
+    low_achiever_str = ['📉 Underachiever 📉']
+    best_performance = -9999
+    worst_performance = 9999
+    for i in box_scores:
+        home_performance = i.home_score - i.home_projected
+        away_performance = i.away_score - i.away_projected
+
+        if home_performance > best_performance:
+            best_performance = home_performance
+            over_achiever = i.home_team.team_name
+        if home_performance < worst_performance:
+            worst_performance = home_performance
+            under_achiever = i.home_team.team_name
+        if away_performance > best_performance:
+            best_performance = away_performance
+            over_achiever = i.away_team.team_name
+        if away_performance < worst_performance:
+            worst_performance = away_performance
+            under_achiever = i.away_team.team_name
+
+    if best_performance > 0:
+        high_achiever_str +=['%s was %.2f points over their projection' % (over_achiever, best_performance)]
+    else:
+        high_achiever_str += 'No team out performed their projection'
+
+    if worst_performance < 0:
+        low_achiever_str += ['%s was %.2f points under their projection' % (under_achiever, abs(worst_performance))]
+    else:
+        low_achiever_str += 'No team was worse than their projection'
+
+    return(high_achiever_str + low_achiever_str)
+
 def get_trophies(league, week=None):
     # Gets trophies for highest score, lowest score, closest score, and biggest win
     matchups = league.box_scores(week=week)
@@ -714,334 +612,6 @@ def get_trophies(league, week=None):
     close_score_str = ['😅 Close win 😅']+['%s barely beat %s by %.2f points' % (close_winner, close_loser, closest_score)]
     blowout_str = ['😱 Blow out 😱']+['%s blew out %s by %.2f points' % (ownerer_team_name, blown_out_team_name, biggest_blowout)]
 
-    text = ['Trophies of the week:'] + high_score_str + low_score_str + blowout_str + close_score_str + get_luckys(league, week)
+    text = ['Trophies of the week:'] + high_score_str + low_score_str + blowout_str + close_score_str + get_luckys(league, week) + get_achievers(league, week)
     return '\n'.join(text)
-
-
-def str_to_bool(check):
-    return check.lower() in ("yes", "true", "t", "1")
-
-def str_limit_check(text,limit):
-    split_str=[]
-
-    if len(text)>limit:
-        part_one=text[:limit].split('\n')
-        part_one.pop()
-        part_one='\n'.join(part_one)
-
-        part_two=text[len(part_one)+1:]
-
-        split_str.append(part_one)
-        split_str.append(part_two)
-    else:
-        split_str.append(text)
-
-    return split_str
-
-def bot_main(function):
-    str_limit = 40000 #slack char limit
-
-    try:
-        bot_id = os.environ["BOT_ID"]
-        str_limit = 1000
-    except KeyError:
-        bot_id = 1
-
-    try:
-        slack_webhook_url = os.environ["SLACK_WEBHOOK_URL"]
-    except KeyError:
-        slack_webhook_url = 1
-
-    try:
-        discord_webhook_url = os.environ["DISCORD_WEBHOOK_URL"]
-        str_limit = 3000
-    except KeyError:
-        discord_webhook_url = 1
-    
-    if (len(str(bot_id)) <= 1 and
-        len(str(slack_webhook_url)) <= 1 and
-            len(str(discord_webhook_url)) <= 1):
-        # Ensure that there's info for at least one messaging platform,
-        # use length of str in case of blank but non null env variable
-        raise Exception("No messaging platform info provided. Be sure one of BOT_ID,\
-                        SLACK_WEBHOOK_URL, or DISCORD_WEBHOOK_URL env variables are set")
-
-    league_id = os.environ["LEAGUE_ID"]
-
-    try:
-        year = int(os.environ["LEAGUE_YEAR"])
-    except KeyError:
-        year = 2022
-
-    try: 
-        league_year_start = int(os.environ["LEAGUE_YEAR_START"])
-    except KeyError:
-        league_year_start = 2016
-    
-    try:
-        swid = os.environ["SWID"]
-    except KeyError:
-        swid = '{1}'
-
-    if swid.find("{", 0) == -1:
-        swid = "{" + swid
-    if swid.find("}", -1) == -1:
-        swid = swid + "}"
-
-    try:
-        espn_s2 = os.environ["ESPN_S2"]
-    except KeyError:
-        espn_s2 = '1'
-
-    try:
-        test = str_to_bool(os.environ["TEST"])
-    except KeyError:
-        test = False
-
-    try:
-        top_half_scoring = str_to_bool(os.environ["TOP_HALF_SCORING"])
-    except KeyError:
-        top_half_scoring = False
-
-    try:
-        random_phrase = str_to_bool(os.environ["RANDOM_PHRASE"])
-    except KeyError:
-        random_phrase = False
-
-    try:
-        waiver_report = str_to_bool(os.environ["WAIVER_REPORT"])
-    except KeyError:
-        waiver_report = False
-    
-    try:
-        weekly_waiver = str_to_bool(os.environ["WEEKLY_WAIVER"])
-    except KeyError:
-        weekly_waiver = False
-        
-    try:
-        monitor_report = str_to_bool(os.environ["MONITOR_REPORT"])
-    except KeyError:
-        monitor_report = False
-    
-    try:
-        league_name = os.environ['LEAGUE_NAME']
-    except KeyError:
-        league_name = 'colleagues'
-
-    bot = GroupMeBot(bot_id)
-    slack_bot = SlackBot(slack_webhook_url)
-    discord_bot = DiscordBot(discord_webhook_url)
-
-    if swid == '{1}' or espn_s2 == '1':
-        league = League(league_id=league_id, year=year)
-    else:
-        league = League(league_id=league_id, year=year, espn_s2=espn_s2, swid=swid)
-
-    if league.scoringPeriodId > len(league.settings.matchup_periods):
-        print("Not in active season")
-        return
-
-    faab = league.settings.faab
-
-    if test:
-        week = league.current_week - 1
-        print("League: " + league_name)
-        # print(os.environ)
-        print("Expected Win Total \n")
-        print(expected_win_record(league, 9))
-        print(get_expected_win_total(league, week))
-        print(yoy_expected_win_record(league_id, swid, espn_s2, 2019, year))
-        print(get_matchups(league,league_name))
-        print(get_scoreboard_short(league))
-        print(get_projected_scoreboard(league))
-        print(get_close_scores(league))
-        print(get_power_rankings(league))
-        print(power_rankings_yoy(league_id, swid, espn_s2, league_year_start, year))
-        print("Top Half Scoring = " + str(top_half_scoring) + '\n')
-        print(get_standings(league, top_half_scoring))
-        print("Monitor Report = " + str(monitor_report) + '\n')
-        print(get_monitor(league))
-        if (waiver_report or weekly_waiver or daily_waiver) and swid != '{1}' and espn_s2 != '1':
-            print(get_waiver_report(league, faab))
-        function = "get_final"
-        # bot.send_message("Testing")
-        # slack_bot.send_message("Testing")
-        # discord_bot.send_message("Testing")
-
-    salutation = ''
-    currentDT = datetime.datetime.now()
-    currentHour = currentDT.hour
-
-    if currentHour > 6 and currentHour < 17:
-        salutation = "Gm. "
-    elif currentHour >= 17 and currentHour < 22:
-        salutation = "Ga. "
-    else:
-        salutation = "Ge. "
-
-    text = ''
-
-    if function == "get_matchups":
-        text = "Ge. " + get_matchups(league,league_name)
-        text = text + "\n\n" + get_projected_scoreboard(league)
-    elif function == "get_monitor":
-        text = "Gm. " + get_monitor(league)
-    elif function == "get_scoreboard_short":
-        text = get_scoreboard_short(league)
-        text = text + "\n\n" + get_projected_scoreboard(league)
-    elif function == "get_projected_scoreboard":
-        text = get_projected_scoreboard(league)
-    elif function == "get_close_scores":
-        text = "Ge. " + get_close_scores(league)
-    elif function == "get_power_rankings":
-        text = "Ge. " + get_power_rankings(league)
-    elif function == "yoy_power_rankings":
-        if swid != '{1}' and espn_s2 != '1':
-            text = "Ga. " + power_rankings_yoy(league_id, swid, espn_s2, league_year_start, year)
-    elif function == "get_expected_win_total":
-        week = league.current_week - 1
-        text = "Ga. " + get_expected_win_total(league, week)
-    elif function == "yoy_expected_win_record":
-         if swid != '{1}' and espn_s2 != '1':
-                text = "Ga. " + yoy_expected_win_record(league_id, swid, espn_s2, 2019, year)
-    elif function == "get_trophies":
-        text = "Gm. " + get_trophies(league)
-    elif function == "get_standings":
-        text = "Gm. " + get_standings(league, top_half_scoring)
-        if waiver_report and swid != '{1}' and espn_s2 != '1':
-            text += '\n\n' + get_waiver_report(league, faab)
-    elif function == "get_final":
-        # on Tuesday we need to get the scores of last week
-        week = league.current_week - 1
-        text = "Gm. Final " + get_scoreboard_short(league, week=week)
-        text = text + "\n\n" + get_trophies(league, week=week)
-    elif function == "get_waiver_report" and swid != '{1}' and espn_s2 != '1':
-        text = get_waiver_report(league, faab)
-    elif function == "init":
-        try:
-            text = salutation + os.environ["INIT_MSG"] + random_init(league_name)[0]
-        except KeyError:
-            # do nothing here, empty init message
-            pass
-    else:
-        text = "Something happened. HALP"
-
-    if text != '' and not test:
-        messages=str_limit_check(text, str_limit)
-        for message in messages:
-            bot.send_message(message)
-            slack_bot.send_message(message)
-            discord_bot.send_message(message)
-
-    if test:
-        # print "get_final" function
-        print(text)
-
-
-if __name__ == '__main__':
-    try:
-        ff_start_date = os.environ["START_DATE"]
-    except KeyError:
-        ff_start_date = '2022-09-08'
-
-    try:
-        ff_end_date = os.environ["END_DATE"]
-    except KeyError:
-        ff_end_date = '2023-01-04'
-
-    try:
-        my_timezone = os.environ["TIMEZONE"]
-    except KeyError:
-        my_timezone = 'America/New_York'
-
-    try:
-        daily_waiver = str_to_bool(os.environ["DAILY_WAIVER"])
-    except KeyError:
-        daily_waiver = False
-    
-    try:
-        weekly_waiver = str_to_bool(os.environ["WEEKLY_WAIVER"])
-    except KeyError:
-        weekly_waiver = False  
-
-    try:
-        monitor_report = str_to_bool(os.environ["MONITOR_REPORT"])
-    except KeyError:
-        monitor_report = False
-
-    game_timezone = 'America/New_York'
-    bot_main("init")
-    sched = BlockingScheduler(job_defaults={'misfire_grace_time': 15*60})
-
-    # close scores (within 15.99 points): monday evening at 6:30pm east coast time.
-    # trophies:                           tuesday morning at 7:30am local time.
-    # expected wins total:                tuesday afternoon at 12:00pm local time.
-    # power rankings:                     tuesday evening at 6:30pm local time.
-    # standings:                          wednesday morning at 7:30am local time.
-    # waiver report:                      wednesday morning at 7:30am local time. (optional)
-    # yoy expected wins:                  thursday afternoon at 12:00pm east coast time
-    # yoy power rankings:                 thursday afternoon at 3:00pm east coast time.
-    # matchups:                           thursday evening at 7:30pm east coast time.
-    # score update:                       friday, monday, and tuesday morning at 7:30am local time.
-    # player monitor report:              sunday morning at 7:30am local time.
-    # score update:                       sunday at 4pm, 8pm east coast time.
-
-    sched.add_job(bot_main, 'cron', ['get_close_scores'], id='close_scores',
-        day_of_week='mon', hour=18, minute=30, start_date=ff_start_date, end_date=ff_end_date,
-        timezone=game_timezone, replace_existing=True)
-    
-    sched.add_job(bot_main, 'cron', ['get_final'], id='final',
-        day_of_week='tue', hour=7, minute=30, start_date=ff_start_date, end_date=ff_end_date,
-        timezone=my_timezone, replace_existing=True)
-    
-    sched.add_job(bot_main, 'cron', ['get_expected_win_total'], id='expected_wins',
-        day_of_week='tue', hour=12, minute=00, start_date=ff_start_date, end_date=ff_end_date,
-        timezone=my_timezone, replace_existing=True)
-    
-    sched.add_job(bot_main, 'cron', ['get_power_rankings'], id='power_rankings',
-        day_of_week='tue', hour=18, minute=30, start_date=ff_start_date, end_date=ff_end_date,
-        timezone=my_timezone, replace_existing=True)
-    
-    sched.add_job(bot_main, 'cron', ['get_standings'], id='standings',
-        day_of_week='wed', hour=7, minute=30, start_date=ff_start_date, end_date=ff_end_date,
-        timezone=my_timezone, replace_existing=True)
-    
-    if daily_waiver:
-        sched.add_job(bot_main, 'cron', ['get_waiver_report'], id='waiver_report',
-            day_of_week='mon, tue, thu, fri, sat, sun', hour=7, minute=31, start_date=ff_start_date, end_date=ff_end_date,
-            timezone=my_timezone, replace_existing=True)
-    
-    if weekly_waiver:
-        sched.add_job(bot_main, 'cron', ['get_waiver_report'], id='waiver_report',
-            day_of_week='wed', hour=8, minute=30, start_date=ff_start_date, end_date=ff_end_date,
-            timezone=my_timezone, replace_existing=True)
-
-    sched.add_job(bot_main, 'cron', ['yoy_expected_win_record'], id='yoy_expected_win_record',
-        day_of_week='thu', hour=12, minute=00, start_date=ff_start_date, end_date=ff_end_date,
-        timezone=game_timezone, replace_existing=True)
-    
-    sched.add_job(bot_main, 'cron', ['power_rankings_yoy'], id='power_rankings_yoy',
-        day_of_week='thu', hour=15, minute=00, start_date=ff_start_date, end_date=ff_end_date,
-        timezone=game_timezone, replace_existing=True)
-    
-    sched.add_job(bot_main, 'cron', ['get_matchups'], id='matchups',
-        day_of_week='thu', hour=19, minute=30, start_date=ff_start_date, end_date=ff_end_date,
-        timezone=game_timezone, replace_existing=True)
-    
-    sched.add_job(bot_main, 'cron', ['get_scoreboard_short'], id='scoreboard1',
-        day_of_week='fri,mon', hour=7, minute=30, start_date=ff_start_date, end_date=ff_end_date,
-        timezone=my_timezone, replace_existing=True)
-
-    if monitor_report:
-        sched.add_job(bot_main, 'cron', ['get_monitor'], id='monitor',
-                    day_of_week='sun', hour=7, minute=30, start_date=ff_start_date, end_date=ff_end_date,
-                    timezone=my_timezone, replace_existing=True)
-
-    sched.add_job(bot_main, 'cron', ['get_scoreboard_short'], id='scoreboard2',
-                  day_of_week='sun', hour='16,20', start_date=ff_start_date, end_date=ff_end_date,
-                  timezone=game_timezone, replace_existing=True)
-
-    print("Ready!")
-    sched.start()
-
 

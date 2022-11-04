@@ -1,3 +1,5 @@
+## Forked Repo Credit
+
 [![GitHub release](https://img.shields.io/github/v/release/dtcarls/fantasy_football_chat_bot)](https://github.com/dtcarls/fantasy_football_chat_bot/releases/latest/)
 ![Test workflow](https://github.com/dtcarls/fantasy_football_chat_bot/actions/workflows/ci.yaml/badge.svg)
 ![Publish workflow](https://github.com/dtcarls/fantasy_football_chat_bot/actions/workflows/publish_image.yaml/badge.svg)
@@ -41,7 +43,6 @@ Table of Contents
      * [GroupMe Setup](#groupme-setup)
      * [Slack setup](#slack-setup)
      * [Discord setup](#discord-setup)
-     * [Heroku setup](#heroku-setup)
      * [Private Leagues](#private-leagues)
   * [Troubleshooting / FAQ](#troubleshooting--faq)
   * [Getting Started for development and testing](#getting-started-for-development-and-testing)
@@ -149,58 +150,6 @@ Save the "Webhook URL" on this page
 ![](https://i.imgur.com/U4MKZSY.png)
 </details>
 
-### Heroku setup
-
-Heroku is what we will be using to host the chat bot.
-
-**"Starting November 28, 2022, Heroku plans to stop offering free product plans and plans to start shutting down free dynos and data services."**
-I offer a hosting service far lower than the new costs of Heroku at https://www.GameDayBot.com/
-
-Go to https://id.heroku.com/login and sign up or login
-
-
-:warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning:
-
-:rotating_light:**Click this purple button to automatically deploy the code:**:rotating_light:
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
-
-:warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning:
-
-Go to your dashboard (https://dashboard.heroku.com/apps)
-Now you will need to setup your environment variables so that it works for your league. Click Settings at your dashboard. Then click "Reveal Config Vars" button and you will see something like this.
-
-![](https://i.imgur.com/7a1V6v8.png)
-
-Now we will need to edit these variables (click the pencil to the right of the variable to modify)
-Note: App will restart when you change any variable so your chat room may be semi-spammed with the init message of "Hi" you can change the INIT_MSG variable to be blank to have no init message. It should also be noted that Heroku seems to restart the app about once a day
-
-- BOT_ID: This is your Bot ID from the GroupMe developers page (REQUIRED IF USING GROUPME)
-- SLACK_WEBHOOK_URL: This is your Webhook URL from the Slack App page (REQUIRED IF USING SLACK)
-- DISCORD_WEBHOOK_URL: This is your Webhook URL from the Discord Settings page (REQUIRED IF USING DISCORD)
-- LEAGUE_ID: This is your ESPN league id (REQUIRED)
-- START_DATE: This is when the bot will start paying attention and sending messages to your chat. (2020-09-10 by default)
-- END_DATE: This is when the bot will stop paying attention and stop sending messages to your chat. (2020-12-30 by default)
-- LEAGUE_YEAR: ESPN League year to look at (2020 by default)
-- TIMEZONE: The timezone that the messages will look to send in. (America/New_York by default)
-- INIT_MSG: The message that the bot will say when it is started (can be blank or deleted for no message)
-- TOP_HALF_SCORING: If set to True, when standings are posted on Wednesday it will also include being in the top half of your league for points and you receive an additional "win" for it.
-- RANDOM_PHRASE: If set to True, when matchups are posted on Tuesday it will also include a random phrase
-- MONITOR_REPORT: If set to True, will provide a report of players in starting lineup that are Questionable, Doubtful, Out, or projected for less than 4 points
-- WAIVER_REPORT: If set to True, will provide a waiver report of add/drops. :warning: ESPN_S2 and SWID are required for this to work :warning:
-- DAILY_WAIVER: If set to True, will provide a waiver report of add/drops daily. :warning: ESPN_S2 and SWID are required for this to work :warning:
-- ESPN_S2: Used for private leagues. See [Private Leagues Section](#private-leagues) for documentation
-- SWID: Used for private leagues. (Can be defined with or without {}) See [Private Leagues Section](#private-leagues) for documentation
-
-
-After you have setup your variables you will need to turn it on. Navigate to the "Resources" tab of your Heroku app Dashboard.
-You should see something like below. Click the pencil on the right and toggle the buton so it is blue like depicted and click "Confirm."
-![](https://i.imgur.com/J6bpV2I.png)
-
-You're done! You now have a fully featured GroupMe/Slack/Discord chat bot for ESPN leagues! If you have an INIT_MSG you will see it exclaimed in your GroupMe, Discord, or Slack chat room.
-
-Unfortunately to do auto deploys of the latest version you need admin access to the repository on git. You can check for updates on the github page (https://github.com/dtcarls/ff_bot/commits/master) and click the deploy button again; however, this will deploy a new instance and the variables will need to be edited again.
-
 #### Private Leagues
 
 For private league you will need to get your swid and espn_s2.
@@ -250,43 +199,77 @@ These instructions will get you a copy of the project up and running
 on your local machine for development and testing purposes.
 
 ### Installing for development
-With Docker:
+
+#### Pull Repo to local instance
+
 ```bash
-git clone https://github.com/dtcarls/ff_bot
-
-cd ff_bot
-
-docker build -t ff_bot .
+localhost$ git clone https://github.com/mrmcmerrill/ff_bot
 ```
 
-Without Docker:
+#### Setup Environment
+
+This example is for setting up `2` leagues. It would work the same for `n` number of leagues, with a separate block for each league to be sources from the deploy script.
+
+[ff-bot_env file](ff-bot_env)
+```bash
+# League 1 Vars
+export league1_BOT_ID=<BOT_ID>
+export league1_LEAGUE_ID=<LEAGUE_ID>
+export league1_LEAGUE_YEAR_START=2020
+export league1_SWID=<SWID>
+export league1_ESPN_S2=<ESPN_S2>
+export league1_yoy=False
+
+# League 2 Vars
+export league2_BOT_ID=<BOT_ID>
+export league2_LEAGUE_ID=<LEAGUE_ID>
+export league2_LEAGUE_YEAR_START=2017
+export league2_SWID=<SWID>
+export league2_ESPN_S2=<ESPN_S2>
+export league2_yoy=True
+
+# Test Vars
+export test_BOT_ID=<BOT_ID>
+
+export TIMEZONE=America/New_York
+export START_DATE=2022-09-08
+export END_DATE=2023-01-04
+export INIT_MSG="Hello Friends"
+export LEAGUE_YEAR=2022
+export WEEKLY_WAIVER=True
+```
+
+[deploy-ff_bot script](deploy-ff_bot.sh)
 
 ```bash
-git clone https://github.com/dtcarls/ff_bot
-
-cd ff_bot
-
-python3 setup.py install
+localhost$ cd ff_bot
+localhost$ docker build -t ff_bot:test .
 ```
 
 ### Environment Variables
 
-- BOT_ID: This is your Bot ID from the GroupMe developers page (REQUIRED IF USING GROUPME)
-- SLACK_WEBHOOK_URL: This is your Webhook URL from the Slack App page (REQUIRED IF USING SLACK)
-- DISCORD_WEBHOOK_URL: This is your Webhook URL from the Discord Settings page (REQUIRED IF USING DISCORD)
-- LEAGUE_ID: This is your ESPN league id (REQUIRED)
-- START_DATE: This is when the bot will start paying attention and sending messages to your chat. (2020-09-10 by default)
-- END_DATE: This is when the bot will stop paying attention and stop sending messages to your chat. (2020-12-30 by default)
-- LEAGUE_YEAR: ESPN League year to look at (2020 by default)
-- TIMEZONE: The timezone that the messages will look to send in. (America/New_York by default)
-- INIT_MSG: The message that the bot will say when it is started (can be blank or deleted for no message)
-- TOP_HALF_SCORING: If set to True, when standings are posted on Wednesday it will also include being in the top half of your league for points and you receive an additional "win" for it.
-- RANDOM_PHRASE: If set to True, when matchups are posted on Tuesday it will also include a random phrase
-- MONITOR_REPORT: If set to True, will provide a report of players in starting lineup that are Questionable, Doubtful, Out, or projected for less than 4 points
-- WAIVER_REPORT: If set to True, will provide a waiver report of add/drops. :warning: ESPN_S2 and SWID are required for this to work :warning:
-- DAILY_WAIVER: If set to True, will provide a waiver report of add/drops daily. :warning: ESPN_S2 and SWID are required for this to work :warning:
-- ESPN_S2: Used for private leagues. See [Private Leagues Section](#private-leagues) for documentation
-- SWID: Used for private leagues. (Can be defined with or without {}) See [Private Leagues Section](#private-leagues) for documentation
+|Var|Type|Required|Default|Description|
+|---|----|--------|-------|-----------|
+|BOT_ID|String|For GroupMe|None|This is your Bot ID from the GroupMe developers page|
+|SLACK_WEBHOOK_URL|String|For Slack|None|This is your Webhook URL from the Slack App page|
+|DISCORD_WEBHOOK_URL|This is your Webhook URL from the Discord Settings page|For Discord|None|
+|LEAGUE_ID|String|Yes|None|This is your ESPN league id|
+|START_DATE|Date|Yes|Start of current season (YYYY-MM-DD)|This is when the bot will start paying attention and sending messages to your chat.|
+|END_DATE|Date|Yes|End of current season (YYYY-MM-DD)|This is when the bot will stop paying attention and stop sending messages to your chat.|
+|LEAGUE_YEAR|String|Yes|Currernt Year (YYYY)|ESPN League year to look at|
+|LEAGUE_NAME|String|No|None|For designating configs between differnt leagues if deploying this for multiple leagues|
+|TIMEZONE|String|Yes|America/New_York|The timezone that the messages will look to send in.|
+|INIT_MSG|String|No|None|The message that the bot will say when it is started.|
+|TOP_HALF_SCORING|Bool|No|False|If set to True, when standings are posted on Wednesday it will also include being in the top half of your league for points and you receive an additional "win" for it.|
+|RANDOM_PHRASE|Bool|No|False|If set to True, when matchups are posted on Tuesday it will also include a random phrase|
+|MONITOR_REPORT|Bool|No|False|If set to True, will provide a report of players in starting lineup that are Questionable, Doubtful, Out, or projected for less than 4 points|
+|WAIVER_REPORT|Bool|No|False|If set to True, will provide a waiver report of add/drops. :warning: ESPN_S2 and SWID are required for this to work :warning:|
+|WEEKLY_WAIVER|Bool|No|False|If set to True, will provide a waiver report of add/drops weekly. :warning: ESPN_S2 and SWID are required for this to work :warning:|
+|DAILY_WAIVER|Bool|No|False|If set to True, will provide a waiver report of add/drops daily. :warning: ESPN_S2 and SWID are required for this to work :warning:|
+|ESPN_S2|String|For WAIVER/YOY/Private leagues|None|Used for private leagues. See [Private Leagues Section](#private-leagues) for documentation|
+|SWID|String|For WAIVER/YOY/Private leagues|None|Used for private leagues. (Can be defined with or without {}) See [Private Leagues Section](#private-leagues) for documentation|
+|YOY|Bool|No|False|Used if you want to enable the YOY statistics to including previous years, like YOY Expected Wins or YOY Power Rankings :warning: ESPN_S2 and SWID are required for these to work :warning:
+|LEAGUE_START_YEAR|String|For YOY|2019 (YYYY)|Used for YOY start year. When was the first year of the league. Expected Wins only works back to 2019 due to ESPN api not exposing box scores until then.|
 
 ### Running with Docker
 
@@ -305,19 +288,6 @@ Use BOT_ID if using Groupme, DISCORD_WEBHOOK_URL if using Discord, and SLACK_WEB
 ff_bot
 ```
 
-### Running without Docker
-
-Use BOT_ID if using Groupme, DISCORD_WEBHOOK_URL if using Discord, and SLACK_WEBHOOK_URL if using Slack (or multiple to get messages in multiple places)
-
-```bash
->>> export BOT_ID=[enter your GroupMe Bot ID]
->>> export WEBHOOK_URL=[enter your Webhook URL]
->>> export LEAGUE_ID=[enter ESPN league ID]
->>> export LEAGUE_YEAR=[enter league year]
->>> cd ff_bot
->>> python3 ff_bot/ff_bot.py
-```
-
 ### Running the tests
 
 Automated tests for this package are included in the `tests` directory. After installation,
@@ -326,4 +296,5 @@ you can run these tests by changing the directory to the `ff_bot` directory and 
 ```python3
 python3 setup.py test
 ```
+
 </details>
