@@ -8,17 +8,17 @@ from datetime import date
 from ff_bot.espn.env_vars import get_env_vars
 import ff_bot.espn.functionality as espn
 import ff_bot.utils as utils
-from ff_bot.chats.groupme import GroupMe
-from ff_bot.chats.slack import Slack
-from ff_bot.chats.discord import Discord
+from ff_bot.chats.groupme import GroupMeBot
+from ff_bot.chats.slack import SlackBot
+from ff_bot.chats.discord import DiscordBot
 from espn_api.football import League
 
 def espn_bot(function):
     data = get_env_vars()
     init_msg = data['init_msg']
-    bot = GroupMe(data['bot_id'])
-    slack_bot = Slack(data['slack_webhook_url'])
-    discord_bot = Discord(data['discord_webhook_url'])
+    bot = GroupMeBot(data['bot_id'])
+    slack_bot = SlackBot(data['slack_webhook_url'])
+    discord_bot = DiscordBot(data['discord_webhook_url'])
     swid = data['swid']
     espn_s2 = data['espn_s2']
     league_id = data['league_id']

@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 class DiscordException(Exception):
     pass
 
-class DiscordBot(object):
+class Discord(object):
     # Creates Discord Bot to send messages
     def __init__(self, webhook_url):
         self.webhook_url = webhook_url
