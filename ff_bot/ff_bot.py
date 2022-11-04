@@ -233,17 +233,17 @@ def yoy_expected_win_record(league_id, swid, espn_s2, league_year_start, year):
         temp_score = 0.0
         for year in year_expected_dict[owner]:
             if int(year_expected_dict[owner][year]['wins']) > high_score:
-                high_score = str(year_expected_dict[owner][year]['wins'] + "-" + 
-                                 year_expected_dict[owner][year]['losses'] + "-" +
-                                 year_expected_dict[owner][year]['ties'] + " " +
-                                 "(" + year_expected_dict[owner][year]['pct'] + ")")
+                high_score = ['%s-%s-%s (%s)' % (year_expected_dict[owner][year]['wins'], 
+                                                 year_expected_dict[owner][year]['losses'], 
+                                                 year_expected_dict[owner][year]['ties'],
+                                                 year_expected_dict[owner][year]['pct'])]
                 high_score_owner = owner
                 high_score_year = year
             elif int(year_expected_dict[owner][year]['wins']) < low_score:
-                low_score = str(year_expected_dict[owner][year]['wins'] + "-" + 
-                                 year_expected_dict[owner][year]['losses'] + "-" +
-                                 year_expected_dict[owner][year]['ties'] + " " +
-                                 "(" + year_expected_dict[owner][year]['pct'] + ")")
+                low_score = ['%s-%s-%s (%s)' % (year_expected_dict[owner][year]['wins'], 
+                                                year_expected_dict[owner][year]['losses'], 
+                                                year_expected_dict[owner][year]['ties'],
+                                                year_expected_dict[owner][year]['pct'])]
                 low_score_owner = owner
                 low_score_year = year
                 
