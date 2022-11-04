@@ -900,6 +900,9 @@ def bot_main(function):
     elif function == "get_expected_win_total":
         week = league.current_week - 1
         text = "Ga. " + get_expected_win_total(league, week)
+    elif function == "yoy_expected_win_record":
+         if swid != '{1}' and espn_s2 != '1':
+                text = "Ga. " + yoy_expected_win_record(league_id, swid, espn_s2, 2019, year)
     elif function == "get_trophies":
         text = "Gm. " + get_trophies(league)
     elif function == "get_standings":
@@ -975,7 +978,8 @@ if __name__ == '__main__':
     # power rankings:                     tuesday evening at 6:30pm local time.
     # standings:                          wednesday morning at 7:30am local time.
     # waiver report:                      wednesday morning at 7:30am local time. (optional)
-    # yoy power rankings                  thursday afternoon at 3:00pm east coast time.
+    # yoy expected wins:                  thursday afternoon at 12:00pm east coast time
+    # yoy power rankings:                 thursday afternoon at 3:00pm east coast time.
     # matchups:                           thursday evening at 7:30pm east coast time.
     # score update:                       friday, monday, and tuesday morning at 7:30am local time.
     # player monitor report:              sunday morning at 7:30am local time.
@@ -1011,6 +1015,10 @@ if __name__ == '__main__':
             day_of_week='wed', hour=8, minute=30, start_date=ff_start_date, end_date=ff_end_date,
             timezone=my_timezone, replace_existing=True)
 
+    sched.add_job(bot_main, 'cron', ['yoy_expected_win_record'], id='yoy_expected_win_record',
+        day_of_week='thu', hour=12, minute=00, start_date=ff_start_date, end_date=ff_end_date,
+        timezone=game_timezone, replace_existing=True)
+    
     sched.add_job(bot_main, 'cron', ['power_rankings_yoy'], id='power_rankings_yoy',
         day_of_week='thu', hour=15, minute=00, start_date=ff_start_date, end_date=ff_end_date,
         timezone=game_timezone, replace_existing=True)
