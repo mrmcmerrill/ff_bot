@@ -523,8 +523,9 @@ def power_rankings_yoy(league_id, swid, espn_s2, league_year_start, year, curren
         temp_score = 0.0
         for year in team_rankings[owner]:
             temp_score = float(team_rankings[owner][year])
-            print(type(alltime_total))
-            print(alltime_total)
+            print(type(alltime_total[owner]))
+            print(alltime_total[owner])
+            print(temp_score)
             alltime_total[owner] = alltime_total[owner] + temp_score
             print(alltime_total)
     
