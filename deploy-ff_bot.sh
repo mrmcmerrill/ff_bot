@@ -52,7 +52,7 @@ sudo docker run -dit --name ${environ}-rankings-bot \
 	-e "INIT_MSG=$INIT_MSG" \
 	-e "LEAGUE_YEAR=$LEAGUE_YEAR" \
   -e "BOT_ID=${!THIS_BOT_ID}" \
-	-e "TEST=$TEST" \
+  -e "TEST=$TEST" \
   -e "LEAGUE_YEAR_START=${!THIS_LEAGUE_YEAR_START}" \
   -e "YOY=${!THIS_YOY}" \
   -e "SWID=${!THIS_SWID}" \
