@@ -16,13 +16,14 @@ while getopts "l:t" option; do
    esac
 done
 
-source ./ff-bot_env
+source ./ff_bot-env
 
 if [[ "$test" == "true" ]]; then
   environ="test"
   TEST=True
   THIS_LEAGUE_ID="${LEAGUE_NAME}_LEAGUE_ID"
   THIS_LEAGUE_YEAR_START="${LEAGUE_NAME}_LEAGUE_YEAR_START"
+  THIS_YOY="${LEAGUE_NAME}_YOY"
   THIS_SWID="${LEAGUE_NAME}_SWID"
   THIS_ESPN_S2="${LEAGUE_NAME}_ESPN_S2"
   IMAGE_TAG="test"
@@ -35,6 +36,7 @@ fi
 THIS_BOT_ID="${environ}_BOT_ID"
 THIS_LEAGUE_ID="${LEAGUE_NAME}_LEAGUE_ID"
 THIS_LEAGUE_YEAR_START="${LEAGUE_NAME}_LEAGUE_YEAR_START"
+THIS_YOY="${LEAGUE_NAME}_YOY"
 THIS_SWID="${LEAGUE_NAME}_SWID"
 THIS_ESPN_S2="${LEAGUE_NAME}_ESPN_S2"
 
@@ -50,8 +52,9 @@ sudo docker run -dit --name ${environ}-rankings-bot \
 	-e "INIT_MSG=$INIT_MSG" \
 	-e "LEAGUE_YEAR=$LEAGUE_YEAR" \
   -e "BOT_ID=${!THIS_BOT_ID}" \
-	-e "TEST=$TEST" \
+  -e "TEST=$TEST" \
   -e "LEAGUE_YEAR_START=${!THIS_LEAGUE_YEAR_START}" \
+  -e "YOY=${!THIS_YOY}" \
   -e "SWID=${!THIS_SWID}" \
   -e "ESPN_S2=${!THIS_ESPN_S2}" \
 	mchome/ff_bot:$IMAGE_TAG

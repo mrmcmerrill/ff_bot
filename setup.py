@@ -7,21 +7,21 @@ setup(
 
     include_package_data=True,
 
-    version='0.3.0',
+    version='1.1.0',
 
-    description='ESPN fantasy football Chat Bot',
+    description='Fantasy Football Chat Bot',
 
-    author='Dean Carlson',
+    author='Robert McClary',
 
-    author_email='deantcarlson@gmail.com',
+    author_email='rmcclary.30@gmail.com',
 
-    install_requires=['requests>=2.0.0,<3.0.0', 'espn_api>=0.22.0', 'apscheduler>3.0.0,<4.0.0', 'datetime'],
+    install_requires=['requests>=2.0.0,<3.0.0', 'espn_api>=0.26.0', 'apscheduler>3.0.0,<4.0.0', 'datetime'],
 
     test_suite='nose.collector',
 
     tests_require=['nose', 'requests_mock'],
 
-    url='https://github.com/dtcarls/ff_bot',
+    url='https://github.com/mrmcmerrill/ff_bot',
 
     classifiers=[
         'Natural Language :: English',
