@@ -1,17 +1,17 @@
 # Dale Earndhart
 export dale_BOT_ID=d011385c816face252040ca61a
 export dale_LEAGUE_ID=1071321
-export colleagues_LEAGUE_YEAR_START=2012
+export colleagues_LEAGUE_YEAR_START=2020
 
 # The Colleagues
 export colleagues_BOT_ID=2efb788491ed8301d537d294d1
 export colleagues_LEAGUE_ID=1019976
-export colleagues_LEAGUE_YEAR_START=2016
+export colleagues_LEAGUE_YEAR_START=2017
 
 # Test
 export test_BOT_ID=e04001ed152488ae3a1a034213
 export test_LEAGUE_ID=
-export test_LEAGUE_YEAR_START=2016
+export test_LEAGUE_YEAR_START=2017
 
 export TIMEZONE=America/New_York
 export START_DATE=2022-09-08
