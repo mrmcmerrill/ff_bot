@@ -178,7 +178,7 @@ def get_expected_win_total(league, week=None):
 
     return '\n'.join(text)
 
-def yoy_expected_win_record(league_id, swid, espn_s2, league_year_start, year, week):
+def yoy_expected_win_record(league_id, swid, espn_s2, league_year_start, year):
     league = League(league_id=league_id, year=yoy_year, swid=swid, espn_s2=espn_s2)
     
     total_league_years = year - league_year_start
