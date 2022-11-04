@@ -482,7 +482,7 @@ def power_rankings_yoy(league_id, league_year_start, year, current_week=None):
     league = League(league_id=league_id, year=year)
 
     # initialize the dictionary for the by year and team sorted power rankings
-    team_rankings = {i.owner: {x: float for x in league_years} for i in league.teams} 
+    team_rankings = {i.owner.upper.split(" ", 1)[0]: {x: float for x in league_years} for i in league.teams} 
 
     for yoy_year in league_years:
         league = League(league_id=league_id, year=yoy_year)
@@ -497,7 +497,7 @@ def power_rankings_yoy(league_id, league_year_start, year, current_week=None):
                 current_week = league.current_week
             
         power_rankings = league.power_rankings(week=current_week)
-        yearly_score = ['%s - %s' % (i[0], i[1].owner) for i in power_rankings
+        yearly_score = ['%s - %s' % (i[0], i[1].owner.upper.split(" ", 1)[0]) for i in power_rankings
         if i]
         text = ['%s Power Rankings' % (yoy_year)] + yearly_score
         print(text)
@@ -508,7 +508,7 @@ def power_rankings_yoy(league_id, league_year_start, year, current_week=None):
         print(team_rankings)
         
         for i in power_rankings:
-            team_rankings[i[1].owner][yoy_year] = i[0]
+            team_rankings[i[1].owner.upper.split(" ", 1)[0]][yoy_year] = i[0]
             
     alltime_total = {i: float for i in league.teams}
     temp_score = float
