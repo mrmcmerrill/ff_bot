@@ -288,19 +288,6 @@ Use BOT_ID if using Groupme, DISCORD_WEBHOOK_URL if using Discord, and SLACK_WEB
 ff_bot
 ```
 
-### Running without Docker
-
-Use BOT_ID if using Groupme, DISCORD_WEBHOOK_URL if using Discord, and SLACK_WEBHOOK_URL if using Slack (or multiple to get messages in multiple places)
-
-```bash
->>> export BOT_ID=[enter your GroupMe Bot ID]
->>> export WEBHOOK_URL=[enter your Webhook URL]
->>> export LEAGUE_ID=[enter ESPN league ID]
->>> export LEAGUE_YEAR=[enter league year]
->>> cd ff_bot
->>> python3 ff_bot/ff_bot.py
-```
-
 ### Running the tests
 
 Automated tests for this package are included in the `tests` directory. After installation,
@@ -309,4 +296,5 @@ you can run these tests by changing the directory to the `ff_bot` directory and 
 ```python3
 python3 setup.py test
 ```
+
 </details>
