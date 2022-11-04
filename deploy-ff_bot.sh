@@ -16,7 +16,7 @@ while getopts "l:t" option; do
    esac
 done
 
-source ./ff-bot_env
+source ./ff_bot-env
 
 if [[ "$test" == "true" ]]; then
   environ="test"
