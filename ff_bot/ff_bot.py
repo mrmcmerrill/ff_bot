@@ -202,7 +202,7 @@ def yoy_expected_win_record(league_id, swid, espn_s2, league_year_start, year):
                 current_week = 16
         else:    
             if not current_week:
-                current_week = league.current_week
+                current_week = league.current_week - 1
     
         temp_expected = expected_win_record(league, current_week)
         
@@ -256,11 +256,11 @@ def yoy_expected_win_record(league_id, swid, espn_s2, league_year_start, year):
             temp_total_Opps = total_team_expected[owner]['wins'] + total_team_expected[owner]['losses'] + total_team_expected[owner]['ties']
             temp_pct = round(total_team_expected[owner]['wins'] / temp_total_Opps, 3)
      
-            total_team_expected[owner]['pct'] = temp_pct
+            total_team_expected[owner]['pct'] = temp_pct.lstrip('0')
     
     print(total_team_expected)
     
-    total_team_expected_sorted = sorted(total_team_expected.items(), key=lambda x: x[1][4], reverse=True)
+    total_team_expected_sorted = sorted(total_team_expected.items(), key=lambda x: x[0][3], reverse=True)
     print(total_team_expected_sorted)
     
     total_team_expected_wins = ['%s-%s-%s (%s) - %s' % (i[1]['wins'], i[1]['losses'], i[1]['ties'], i[1]['pct'], i[0].owner) for i in total_team_expected_sorted if i]
