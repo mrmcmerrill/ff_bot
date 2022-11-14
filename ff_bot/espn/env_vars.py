@@ -13,7 +13,7 @@ def get_env_vars():
     data['league_year_start'] = league_year_start
     
     try:
-        yoy = utils.str_to_bool(os.environ["yoy"])
+        yoy = utils.str_to_bool(os.environ["YOY"])
     except KeyError:
         yoy = False
         
@@ -57,7 +57,7 @@ def get_env_vars():
     try:
         monitor_report = utils.str_to_bool(os.environ["MONITOR_REPORT"])
     except KeyError:
-        monitor_report = True
+        monitor_report = False
 
     data['monitor_report'] = monitor_report
 

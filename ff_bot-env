@@ -22,4 +22,4 @@ export START_DATE=2022-09-08
 export END_DATE=2023-01-04
 export INIT_MSG="Hello Friends"
 export LEAGUE_YEAR=2022
-export WEEKLY_WAIVER=True
+export WEEKLY_WAIVER=False
