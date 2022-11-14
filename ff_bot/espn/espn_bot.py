@@ -55,6 +55,8 @@ def espn_bot(function):
         print(espn.get_projected_scoreboard(league))
         print(espn.get_close_scores(league))
         print(espn.get_power_rankings(league))
+        print("SWID: " + str(swid))
+        print("ESPN_S2: " + str(espn_s2))
         if yoy and swid != '{1}' and espn_s2 != '1':
             print(espn.get_yoy_expected_win_record(league_id, swid, espn_s2, 2019, year))
             print(espn.get_yoy_power_rankings(league_id, swid, espn_s2, league_year_start, year))
