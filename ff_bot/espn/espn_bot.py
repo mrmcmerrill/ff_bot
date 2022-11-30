@@ -12,6 +12,9 @@ from ff_bot.chats.groupme import GroupMeBot
 from ff_bot.chats.slack import SlackBot
 from ff_bot.chats.discord import DiscordBot
 from espn_api.football import League
+import logging
+
+logger = logging.getLogger(__name__)
 
 def espn_bot(function):
     data = get_env_vars()
@@ -127,7 +130,7 @@ def espn_bot(function):
         text = espn.get_waiver_report(league, faab)
     elif function == "init":
         try:
-            text = salutation + os.environ["INIT_MSG"] + utils.random_init(league_name)[0]
+            text = salutation + init_msg + utils.random_init(league_name)[0]
         except KeyError:
             # do nothing here, empty init message
             pass
@@ -137,6 +140,7 @@ def espn_bot(function):
     if text != '' and not test:
         messages=utils.str_limit_check(text, data['str_limit'])
         for message in messages:
+            logger.info("Sending: " + message)
             bot.send_message(message)
             slack_bot.send_message(message)
             discord_bot.send_message(message)
