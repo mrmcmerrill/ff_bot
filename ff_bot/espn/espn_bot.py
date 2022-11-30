@@ -125,6 +125,13 @@ def espn_bot(function):
         week = league.current_week - 1
         text = "Gm. Final " + espn.get_scoreboard_short(league, week=week)
         text = text + "\n\n" + espn.get_trophies(league, week=week)
+        if test:
+            print(text)
+            # print "get_final" function
+            messages=utils.str_limit_check(text, data['str_limit'])
+            for message in messages:
+                logger.info("Sending: " + message)
+                bot.send_message(message)
         
     elif function == "get_waiver_report" and swid != '{1}' and espn_s2 != '1':
         text = espn.get_waiver_report(league, faab)
@@ -144,10 +151,6 @@ def espn_bot(function):
             bot.send_message(message)
             slack_bot.send_message(message)
             discord_bot.send_message(message)
-
-    if test:
-        # print "get_final" function
-        print(text)
     
 if __name__ == '__main__':
     from ff_bot.espn.scheduler import scheduler
