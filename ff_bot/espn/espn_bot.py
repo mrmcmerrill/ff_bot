@@ -51,6 +51,7 @@ def espn_bot(function):
         week = league.current_week - 1
         print("League: " + league_name)
         # print(os.environ)
+        print(str(league))
         print(espn.expected_win_record(league, week))
         print(espn.get_expected_win_total(league, week))
         print(espn.get_matchups(league,league_name))
