@@ -114,11 +114,12 @@ def espn_bot(function):
     elif function == "get_expected_win_total":
         week = league.current_week - 1
         text = "Ga. " + espn.get_expected_win_total(league, week)
-    elif yoy and swid != '{1}' and espn_s2 != '1':
-        if function == "get_yoy_power_rankings":
-                text = "Ga. " + espn.get_yoy_power_rankings(league_id, swid, espn_s2, league_year_start, year)
-        elif function == "get_yoy_expected_win_record":
-                text = "Ga. " + espn.get_yoy_expected_win_record(league_id, swid, espn_s2, 2019, year)
+    elif function == "get_yoy_power_rankings":
+        if yoy and swid != '{1}' and espn_s2 != '1':
+            text = "Ga. " + espn.get_yoy_power_rankings(league_id, swid, espn_s2, league_year_start, year)
+    elif function == "get_yoy_expected_win_record":
+        if yoy and swid != '{1}' and espn_s2 != '1':
+            text = "Ga. " + espn.get_yoy_expected_win_record(league_id, swid, espn_s2, 2019, year)
     elif function == "get_trophies":
         text = "Gm. " + espn.get_trophies(league)
     elif function == "get_standings":
