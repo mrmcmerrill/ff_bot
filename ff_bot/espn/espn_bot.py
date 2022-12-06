@@ -50,6 +50,9 @@ def espn_bot(function):
     if test:
         week = league.current_week - 1
         print("League: " + league_name)
+        print("SWID: " + str(swid))
+        print("ESPN_S2: " + str(espn_s2))
+        print(data)
         # print(os.environ)
         print(str(league))
         print(espn.expected_win_record(league, week))
@@ -124,6 +127,7 @@ def espn_bot(function):
             text += '\n\n' + espn.get_waiver_report(league, faab)
     elif function == "get_final":
         week = league.current_week - 1
+        print(week)
         text = "Gm. Final " + espn.get_scoreboard_short(league, week=week)
         text = text + "\n\n" + espn.get_trophies(league, week=week)
         if test:
