@@ -12,6 +12,9 @@ from ff_bot.chats.groupme import GroupMeBot
 from ff_bot.chats.slack import SlackBot
 from ff_bot.chats.discord import DiscordBot
 from espn_api.football import League
+import logging
+
+logger = logging.getLogger(__name__)
 
 def espn_bot(function):
     data = get_env_vars()
@@ -47,7 +50,11 @@ def espn_bot(function):
     if test:
         week = league.current_week - 1
         print("League: " + league_name)
+        print("SWID: " + str(swid))
+        print("ESPN_S2: " + str(espn_s2))
+        print(data)
         # print(os.environ)
+        print(str(league))
         print(espn.expected_win_record(league, week))
         print(espn.get_expected_win_total(league, week))
         print(espn.get_matchups(league,league_name))
@@ -107,11 +114,12 @@ def espn_bot(function):
     elif function == "get_expected_win_total":
         week = league.current_week - 1
         text = "Ga. " + espn.get_expected_win_total(league, week)
-    elif yoy and swid != '{1}' and espn_s2 != '1':
-        if function == "get_yoy_power_rankings":
-                text = "Ga. " + espn.get_yoy_power_rankings(league_id, swid, espn_s2, league_year_start, year)
-        elif function == "get_yoy_expected_win_record":
-                text = "Ga. " + espn.get_yoy_expected_win_record(league_id, swid, espn_s2, 2019, year)
+    elif function == "get_yoy_power_rankings":
+        if yoy and swid != '{1}' and espn_s2 != '1':
+            text = "Ga. " + espn.get_yoy_power_rankings(league_id, swid, espn_s2, league_year_start, year)
+    elif function == "get_yoy_expected_win_record":
+        if yoy and swid != '{1}' and espn_s2 != '1':
+            text = "Ga. " + espn.get_yoy_expected_win_record(league_id, swid, espn_s2, 2019, year)
     elif function == "get_trophies":
         text = "Gm. " + espn.get_trophies(league)
     elif function == "get_standings":
@@ -120,14 +128,22 @@ def espn_bot(function):
             text += '\n\n' + espn.get_waiver_report(league, faab)
     elif function == "get_final":
         week = league.current_week - 1
+        print(week)
         text = "Gm. Final " + espn.get_scoreboard_short(league, week=week)
         text = text + "\n\n" + espn.get_trophies(league, week=week)
+        if test:
+            print(text)
+            # print "get_final" function
+            messages=utils.str_limit_check(text, data['str_limit'])
+            for message in messages:
+                logger.info("Sending: " + message)
+                bot.send_message(message)
         
     elif function == "get_waiver_report" and swid != '{1}' and espn_s2 != '1':
         text = espn.get_waiver_report(league, faab)
     elif function == "init":
         try:
-            text = salutation + os.environ["INIT_MSG"] + utils.random_init(league_name)[0]
+            text = salutation + init_msg + utils.random_init(league_name)[0]
         except KeyError:
             # do nothing here, empty init message
             pass
@@ -137,13 +153,10 @@ def espn_bot(function):
     if text != '' and not test:
         messages=utils.str_limit_check(text, data['str_limit'])
         for message in messages:
+            logger.info("Sending: " + message)
             bot.send_message(message)
             slack_bot.send_message(message)
             discord_bot.send_message(message)
-
-    if test:
-        # print "get_final" function
-        print(text)
     
 if __name__ == '__main__':
     from ff_bot.espn.scheduler import scheduler
