@@ -12,10 +12,11 @@ def scheduler():
 
     # close scores (within 15.99 points): monday evening at 6:30pm east coast time.
     # trophies:                           tuesday morning at 7:30am local time.
+    # optimized lineups                   tuesday morning at 11:30a local time.
     # expected wins total:                tuesday afternoon at 12:00pm local time.
     # power rankings:                     tuesday evening at 6:30pm local time.
     # standings:                          wednesday morning at 7:30am local time.
-    # waiver report:                      wednesday morning at 7:30am local time. (optional)
+    # waiver report:                      wednesday morning at 7:30am local time. (optional)                   
     # yoy expected wins:                  thursday afternoon at 12:00pm east coast time
     # yoy power rankings:                 thursday afternoon at 3:00pm east coast time.
     # matchups:                           thursday evening at 7:30pm east coast time.
@@ -29,6 +30,10 @@ def scheduler():
     
     sched.add_job(espn_bot, 'cron', ['get_final'], id='final',
                   day_of_week='tue', hour=7, minute=30, start_date=ff_start_date, end_date=ff_end_date,
+                  timezone=my_timezone, replace_existing=True)
+    
+    sched.add_job(espn_bot, 'cron', ['get_optimized_linuep_report'], id='optimized_linup',
+                  day_of_week='tue', hour=11, minute=30, start_date=ff_start_date, end_date=ff_end_date,
                   timezone=my_timezone, replace_existing=True)
     
     sched.add_job(espn_bot, 'cron', ['get_expected_win_total'], id='expected_wins',
