@@ -842,6 +842,7 @@ def get_trophies(league, week=None):
     close_score_str = ['😅 Close win 😅']+['%s barely beat %s by %.2f points' % (close_winner, close_loser, closest_score)]
     blowout_str = ['😱 Blow out 😱']+['%s blew out %s by %.2f points' % (ownerer_team_name, blown_out_team_name, biggest_blowout)]
 
+
     text = ['Trophies of the week:'] + high_score_str + low_score_str + blowout_str + close_score_str + get_lucky_trophy(league, week) + get_achiever_trophy(league, week) + optimal_team_scores(league, week)
     return '\n'.join(text)
 
