@@ -71,7 +71,7 @@ def get_yoy_expected_win_record(league_id, swid, espn_s2, league_year_start, yea
             year_expected_dict[team[0].owner.upper().split(" ", 1)[0]][yoy_year]['ties'] = team[1]['ties']
             year_expected_dict[team[0].owner.upper().split(" ", 1)[0]][yoy_year]['pct'] = team[1]['pct']
     
-    print(year_expected_dict)
+    # print(year_expected_dict)
     
     # initialize the dictionary for the final by team expected wins
     total_team_expected = {i.owner.upper().split(" ", 1)[0]: {'wins': 0, 'losses': 0, 'ties': 0, 'pct': 0.0} for i in league.teams} 
@@ -116,10 +116,10 @@ def get_yoy_expected_win_record(league_id, swid, espn_s2, league_year_start, yea
             temp_total_pct = round(total_team_expected[owner]['wins'] / temp_total_opps, 3)
             total_team_expected[owner]['pct'] = '{:.3f}'.format(temp_total_pct).lstrip('0')
     
-    print(total_team_expected)
+    # print(total_team_expected)
     
     total_team_expected_sorted = sorted(total_team_expected.items(), key=lambda x: x[1]['wins'], reverse=True)
-    print(total_team_expected_sorted)
+    # print(total_team_expected_sorted)
     
     total_team_expected_wins = ['%s-%s-%s (%s) - %s' % (i[1]['wins'], i[1]['losses'], i[1]['ties'], i[1]['pct'], i[0]) for i in total_team_expected_sorted if i]
     
