@@ -53,9 +53,7 @@ def espn_bot(function):
         print("SWID: " + str(swid))
         print("ESPN_S2: " + str(espn_s2))
         print(data)
-        # print(os.environ)
         print(str(league))
-        # print(os.environ)
         print(espn.expected_win_record(league, week))
         print(espn.get_expected_win_total(league, week))
         print(espn.get_matchups(league,league_name))
@@ -63,6 +61,7 @@ def espn_bot(function):
         print(espn.get_projected_scoreboard(league))
         print(espn.get_close_scores(league))
         print(espn.get_power_rankings(league))
+        print(espn.optimal_team_scores(league, full_report=True))
         # print("SWID: " + str(swid))
         # print("ESPN_S2: " + str(espn_s2))
         print("YOY: " + str(yoy))
@@ -124,6 +123,8 @@ def espn_bot(function):
             text = "Ga. " + espn.get_yoy_expected_win_record(league_id, swid, espn_s2, 2019, year)
     elif function == "get_trophies":
         text = "Gm. " + espn.get_trophies(league)
+    elif function == "get_optimized_linuep_report":
+        text = "Gm. " + espn.optimal_team_scores(league, week, full_report=True)
     elif function == "get_standings":
         text = "Gm. " + espn.get_standings(league, top_half_scoring)
         if waiver_report and swid != '{1}' and espn_s2 != '1':
