@@ -7,7 +7,7 @@ setup(
 
     include_package_data=True,
 
-    version='1.1.0',
+    version='1.2.0',
 
     description='Fantasy Football Chat Bot',
 
@@ -15,7 +15,7 @@ setup(
 
     author_email='rmcclary.30@gmail.com',
 
-    install_requires=['requests>=2.0.0,<3.0.0', 'espn_api>=0.26.0', 'apscheduler>3.0.0,<4.0.0', 'datetime'],
+    install_requires=['requests>=2.0.0,<3.0.0', 'espn_api>=0.31.0', 'apscheduler>3.0.0,<4.0.0', 'datetime'],
 
     test_suite='nose.collector',
 
