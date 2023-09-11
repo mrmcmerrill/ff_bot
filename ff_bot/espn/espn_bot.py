@@ -54,6 +54,7 @@ def espn_bot(function):
         print("ESPN_S2: " + str(espn_s2))
         print(data)
         print(str(league))
+        # print(os.environ)
         print(espn.expected_win_record(league, week))
         print(espn.get_expected_win_total(league, week))
         print(espn.get_matchups(league,league_name))
