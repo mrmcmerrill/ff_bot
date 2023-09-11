@@ -55,6 +55,7 @@ def espn_bot(function):
         print(data)
         # print(os.environ)
         print(str(league))
+        # print(os.environ)
         print(espn.expected_win_record(league, week))
         print(espn.get_expected_win_total(league, week))
         print(espn.get_matchups(league,league_name))
@@ -114,6 +115,7 @@ def espn_bot(function):
     elif function == "get_expected_win_total":
         week = league.current_week - 1
         text = "Ga. " + espn.get_expected_win_total(league, week)
+
     elif function == "get_yoy_power_rankings":
         if yoy and swid != '{1}' and espn_s2 != '1':
             text = "Ga. " + espn.get_yoy_power_rankings(league_id, swid, espn_s2, league_year_start, year)
