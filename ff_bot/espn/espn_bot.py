@@ -123,6 +123,8 @@ def espn_bot(function):
             text = "Ga. " + espn.get_yoy_expected_win_record(league_id, swid, espn_s2, 2019, year)
     elif function == "get_trophies":
         text = "Gm. " + espn.get_trophies(league)
+    elif function == "get_optimized_linuep_report":
+        text = "Gm. " + espn.optimal_team_scores(league, week, full_report=True)
     elif function == "get_standings":
         text = "Gm. " + espn.get_standings(league, top_half_scoring)
         if waiver_report and swid != '{1}' and espn_s2 != '1':

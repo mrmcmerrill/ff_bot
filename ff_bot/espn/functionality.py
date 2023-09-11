@@ -14,7 +14,6 @@ def get_scoreboard_short(league, week=None):
     text = ['Score Update'] + score
     return '\n'.join(text)
 
-
 def get_projected_scoreboard(league, week=None):
     # Gets current week's scoreboard projections
     box_scores = league.box_scores(week=week)
