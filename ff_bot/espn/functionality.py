@@ -8,7 +8,7 @@ from espn_api.football import League
 def get_scoreboard_short(league, week=None):
     # Gets current week's scoreboard
     box_scores = league.box_scores(week=week)
-    score = ['%s %.2f - %.2f %s' % (i.home_team.team_abbrev, i.home_score,
+    score = ['%4s %.2f - %.2f %4s' % (i.home_team.team_abbrev, i.home_score,
                                     i.away_score, i.away_team.team_abbrev) for i in box_scores
              if i.away_team]
     text = ['Score Update'] + score
@@ -18,7 +18,7 @@ def get_scoreboard_short(league, week=None):
 def get_projected_scoreboard(league, week=None):
     # Gets current week's scoreboard projections
     box_scores = league.box_scores(week=week)
-    score = ['%s %.2f - %.2f %s' % (i.home_team.team_abbrev, get_projected_total(i.home_lineup),
+    score = ['%4s %.2f - %.2f %4s' % (i.home_team.team_abbrev, get_projected_total(i.home_lineup),
                                     get_projected_total(i.away_lineup), i.away_team.team_abbrev) for i in box_scores
              if i.away_team]
     text = ['Approximate Projected Scores'] + score
@@ -478,7 +478,7 @@ def get_yoy_power_rankings(league_id, swid, espn_s2, league_year_start, year):
     high_score_text = ['\n🥇 High Single Season PR 🥇' + '\n' + '%s - %s: %s' % (high_score_owner, high_score_year, high_score)]
     return '\n'.join(text + high_score_text + low_score_text)
 
-def get_luckys(league, week=None):
+def get_lucky_trophy(league, week=None):
     box_scores = league.box_scores(week=week)
     weekly_scores = {}
     for i in box_scores:
@@ -522,7 +522,7 @@ def get_luckys(league, week=None):
     unlucky_str = ['😡 Unlucky 😡']+['%s was %s against the league, but still took an L' % (unlucky_team_name, unlucky_record)]
     return(lucky_str + unlucky_str)
 
-def get_achievers(league, week=None):
+def get_achiever_trophy(league, week=None):
     """
     Get the teams with biggest difference from projection
     """
@@ -553,12 +553,12 @@ def get_achievers(league, week=None):
     if best_performance > 0:
         high_achiever_str +=['%s was %.2f points over their projection' % (over_achiever, best_performance)]
     else:
-        high_achiever_str += 'No team out performed their projection'
+        high_achiever_str += ['No team out performed their projection']
 
     if worst_performance < 0:
         low_achiever_str += ['%s was %.2f points under their projection' % (under_achiever, abs(worst_performance))]
     else:
-        low_achiever_str += 'No team was worse than their projection'
+        low_achiever_str += ['No team was worse than their projection']
 
     return(high_achiever_str + low_achiever_str)
 
@@ -612,6 +612,6 @@ def get_trophies(league, week=None):
     close_score_str = ['😅 Close win 😅']+['%s barely beat %s by %.2f points' % (close_winner, close_loser, closest_score)]
     blowout_str = ['😱 Blow out 😱']+['%s blew out %s by %.2f points' % (ownerer_team_name, blown_out_team_name, biggest_blowout)]
 
-    text = ['Trophies of the week:'] + high_score_str + low_score_str + blowout_str + close_score_str + get_luckys(league, week) + get_achievers(league, week)
+    text = ['Trophies of the week:'] + high_score_str + low_score_str + blowout_str + close_score_str + get_lucky_trophy(league, week) + get_achiever_trophy(league, week)
     return '\n'.join(text)
 
