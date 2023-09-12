@@ -124,6 +124,7 @@ def espn_bot(function):
     elif function == "get_trophies":
         text = "Gm. " + espn.get_trophies(league)
     elif function == "get_optimized_linuep_report":
+        week = league.current_week - 1
         text = "Gm. " + espn.optimal_team_scores(league, week, full_report=True)
     elif function == "get_standings":
         text = "Gm. " + espn.get_standings(league, top_half_scoring)
@@ -131,7 +132,7 @@ def espn_bot(function):
             text += '\n\n' + espn.get_waiver_report(league, faab)
     elif function == "get_final":
         week = league.current_week - 1
-        print(week)
+        # print(week)
         text = "Gm. Final " + espn.get_scoreboard_short(league, week=week)
         text = text + "\n\n" + espn.get_trophies(league, week=week)
         if test:
