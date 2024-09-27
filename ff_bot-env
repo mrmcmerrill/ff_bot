@@ -18,9 +18,9 @@ export colleagues_YOY=True
 export test_BOT_ID=e04001ed152488ae3a1a034213
 
 export TIMEZONE=America/New_York
-export START_DATE=2023-09-07
-export END_DATE=2024-01-09
+export START_DATE=2024-09-05
+export END_DATE=2025-01-09
 export INIT_MSG="Hello Friends"
 
-export LEAGUE_YEAR=2023
+export LEAGUE_YEAR=2024
 export WEEKLY_WAIVER=False
