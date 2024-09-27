@@ -51,7 +51,7 @@ def random_init(league_name):
 
 def random_name(league_name):
     names_d = { 'colleagues': ['Will','Rob','Ben','Jae','Corey','Gerg','Conner','Nick','Luke','Sott'],
-                'dale': ['Fulton','Rob','Burgoon','Jae','Bemis','Alex','Adam','James','Bobby','Dustin']}
+                'dale': ['Fulton','Rob','Nate','Jae','Carl','Alex','Adam','Roland','Brandon','Dustin']}
     
     names = names_d[league_name]
 
