@@ -8,7 +8,7 @@ from espn_api.football import League
 def get_scoreboard_short(league, week=None):
     # Gets current week's scoreboard
     box_scores = league.box_scores(week=week)
-    score = ['%4s %.2f - %.2f %4s' % (i.home_team.team_abbrev, i.home_score,
+    score = ['%s %.2f - %.2f %s' % (i.home_team.team_abbrev, i.home_score,
                                     i.away_score, i.away_team.team_abbrev) for i in box_scores
              if i.away_team]
     text = ['Score Update'] + score
@@ -17,7 +17,7 @@ def get_scoreboard_short(league, week=None):
 def get_projected_scoreboard(league, week=None):
     # Gets current week's scoreboard projections
     box_scores = league.box_scores(week=week)
-    score = ['%4s %.2f - %.2f %4s' % (i.home_team.team_abbrev, get_projected_total(i.home_lineup),
+    score = ['%s %.2f - %.2f %s' % (i.home_team.team_abbrev, get_projected_total(i.home_lineup),
                                     get_projected_total(i.away_lineup), i.away_team.team_abbrev) for i in box_scores
              if i.away_team]
     text = ['Approximate Projected Scores'] + score
@@ -596,13 +596,13 @@ def optimal_team_scores(league, week=None, full_report=False):
     if full_report:
         i = 1
         for score in best_scores:
-            s = ['%2d: %4s: %6.2f (%6.2f - %.2f%%)' %
+            s = ['%2d: %s - %.2f (%.2f - %.2f%%)' %
                  (i, score.team_abbrev, best_scores[score][0],
                   best_scores[score][1], best_scores[score][3])]
             results += s
             i += 1
 
-        text = ['Optimal Scores:  (Actual - % of optimal)'] + results
+        text = ['Optimal Scores - (Actual - % of optimal)'] + results
         return '\n'.join(text)
     else:
         num_teams = 0
