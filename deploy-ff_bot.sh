@@ -51,6 +51,8 @@ sudo docker run -dit --name ${environ}-rankings-bot \
 	-e "LEAGUE_ID=${!THIS_LEAGUE_ID}" \
 	-e "INIT_MSG=$INIT_MSG" \
 	-e "LEAGUE_YEAR=$LEAGUE_YEAR" \
+	-e "START_DATE=$START_DATE" \
+	-e "END_DATE=$END_DATE"
   -e "BOT_ID=${!THIS_BOT_ID}" \
   -e "TEST=$TEST" \
   -e "LEAGUE_YEAR_START=${!THIS_LEAGUE_YEAR_START}" \
