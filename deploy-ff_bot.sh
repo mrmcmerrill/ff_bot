@@ -43,16 +43,20 @@ THIS_ESPN_S2="${LEAGUE_NAME}_ESPN_S2"
 # Test pointer variables
 # echo $THIS_BOT_ID
 # echo ${!THIS_BOT_ID}
+DOCKER_CONTAINER=`docker ps -a |grep "${environ}-rankings-bot"`
 
-sudo docker stop ${environ}-rankings-bot
-sudo docker rm ${environ}-rankings-bot
+if [[ -z "${DOCKER_CONTAINER}" ]]; then
+  sudo docker stop ${environ}-rankings-bot
+  sudo docker rm ${environ}-rankings-bot
+fi
+
 sudo docker run -dit --name ${environ}-rankings-bot \
 	-e "LEAGUE_NAME=$LEAGUE_NAME" \
 	-e "LEAGUE_ID=${!THIS_LEAGUE_ID}" \
 	-e "INIT_MSG=$INIT_MSG" \
 	-e "LEAGUE_YEAR=$LEAGUE_YEAR" \
-	-e "START_DATE=$START_DATE" \
-	-e "END_DATE=$END_DATE"
+  -e "START_DATE=$START_DATE" \
+  -e "END_DATE=$END_DATE" \
   -e "BOT_ID=${!THIS_BOT_ID}" \
   -e "TEST=$TEST" \
   -e "LEAGUE_YEAR_START=${!THIS_LEAGUE_YEAR_START}" \
