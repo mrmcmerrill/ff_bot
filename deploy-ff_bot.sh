@@ -46,10 +46,10 @@ THIS_ESPN_S2="${LEAGUE_NAME}_ESPN_S2"
 DOCKER_CONTAINER=`docker ps -a |grep "${environ}-rankings-bot" |awk -F " " '{print $1}'`
 TEST_DOCKER_CONTAINER=`docker ps -a |grep "test-rankings-bot"| awk -F " " '{print $1}'`
 
-if [ "$test" == "true" ] && [ -z "${TEST_DOCKER_CONTAINER}" ]; then
+if [ "$test" == "true" ] && [ ! -z "${TEST_DOCKER_CONTAINER}" ]; then
   sudo docker stop test-rankings-bot
   sudo docker rm test-rankings-bot
-elif [ -z "${DOCKER_CONTAINER}" ] && [ "$test" != "true" ]; then
+elif [ ! -z "${DOCKER_CONTAINER}" ] && [ "$test" != "true" ]; then
   sudo docker stop ${environ}-rankings-bot
   sudo docker rm ${environ}-rankings-bot
 fi
