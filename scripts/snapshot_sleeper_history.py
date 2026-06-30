@@ -75,14 +75,28 @@ def snapshot_season(league_id):
             "points_for": round(s.get("fpts", 0) + s.get("fpts_decimal", 0) / 100, 2),
         }
 
-    weekly_scores = {}
+    # Sleeper pairs the two rosters in a game by a shared matchup_id; reassemble those
+    # into head-to-head games (needed for two-step dominance power rankings).
+    matchups = {}
     for week in range(1, reg_weeks + 1):
-        scores = {}
+        by_matchup = {}
         for entry in _get(f"league/{league_id}/matchups/{week}"):
-            pts = entry.get("points")
-            if pts is not None:
-                scores[str(entry["roster_id"])] = round(pts, 2)
-        weekly_scores[str(week)] = scores
+            mid = entry.get("matchup_id")
+            if mid is None or entry.get("points") is None:
+                continue
+            by_matchup.setdefault(mid, []).append(entry)
+        games = []
+        for pair in by_matchup.values():
+            # A complete game has exactly two rosters; skip byes/unmatched entries.
+            if len(pair) == 2:
+                a, b = pair
+                games.append({
+                    "home": str(a["roster_id"]),
+                    "home_score": round(a["points"], 2),
+                    "away": str(b["roster_id"]),
+                    "away_score": round(b["points"], 2),
+                })
+        matchups[str(week)] = games
 
     data = {
         "season": season,
@@ -90,7 +104,7 @@ def snapshot_season(league_id):
         "league_id": int(league_id),
         "regular_season_weeks": reg_weeks,
         "teams": teams,
-        "weekly_scores": weekly_scores,
+        "matchups": matchups,
     }
     return data, prev, status
 
@@ -115,7 +129,7 @@ def main():
             out_file = out_dir / f"{data['season']}.json"
             with open(out_file, "w") as f:
                 json.dump(data, f, indent=2)
-            print(f"  wrote {out_file}  ({len(data['teams'])} teams, {len(data['weekly_scores'])} weeks)")
+            print(f"  wrote {out_file}  ({len(data['teams'])} teams, {len(data['matchups'])} weeks)")
         league_id = prev
 
 

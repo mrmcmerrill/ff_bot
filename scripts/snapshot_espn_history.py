@@ -49,16 +49,21 @@ def snapshot_year(league_id, year, swid, espn_s2):
             "points_for": round(t.points_for, 2),
         }
 
-    weekly_scores = {}
+    # Store head-to-head pairings (needed for two-step dominance power rankings);
+    # per-team scores for the expected-wins/points reports are derivable from these.
+    matchups = {}
     for week in range(1, reg_weeks + 1):
-        scores = {}
+        games = []
         for box in league.box_scores(week):
-            # away_team is 0 on a bye; skip those half-matchups.
-            if box.home_team and box.home_team != 0:
-                scores[str(box.home_team.team_id)] = round(box.home_score, 2)
-            if box.away_team and box.away_team != 0:
-                scores[str(box.away_team.team_id)] = round(box.away_score, 2)
-        weekly_scores[str(week)] = scores
+            # away_team is 0 on a bye; skip games without two real teams.
+            if box.home_team and box.home_team != 0 and box.away_team and box.away_team != 0:
+                games.append({
+                    "home": str(box.home_team.team_id),
+                    "home_score": round(box.home_score, 2),
+                    "away": str(box.away_team.team_id),
+                    "away_score": round(box.away_score, 2),
+                })
+        matchups[str(week)] = games
 
     return {
         "season": year,
@@ -66,7 +71,7 @@ def snapshot_year(league_id, year, swid, espn_s2):
         "league_id": league_id,
         "regular_season_weeks": reg_weeks,
         "teams": teams,
-        "weekly_scores": weekly_scores,
+        "matchups": matchups,
     }
 
 
@@ -92,7 +97,7 @@ def main():
         out_file = out_dir / f"{year}.json"
         with open(out_file, "w") as f:
             json.dump(data, f, indent=2)
-        n_weeks = len(data["weekly_scores"])
+        n_weeks = len(data["matchups"])
         n_teams = len(data["teams"])
         print(f"  wrote {out_file}  ({n_teams} teams, {n_weeks} weeks)")
 
