@@ -75,14 +75,14 @@ def main():
     parser.add_argument("--league", required=True, help="league slug for the output dir, e.g. 'colleagues'")
     parser.add_argument("--start", type=int, required=True, help="first season to snapshot (inclusive)")
     parser.add_argument("--end", type=int, required=True, help="last season to snapshot (inclusive)")
-    parser.add_argument("--out", default=None, help="output root (default: ff_bot/data/espn)")
+    parser.add_argument("--out", default=None, help="output root (default: ff_bot/data)")
     args = parser.parse_args()
 
     league_id = int(os.environ["LEAGUE_ID"])
     swid = os.environ["SWID"]
     espn_s2 = os.environ["ESPN_S2"]
 
-    out_root = Path(args.out) if args.out else Path(__file__).resolve().parent.parent / "ff_bot" / "data" / "espn"
+    out_root = Path(args.out) if args.out else Path(__file__).resolve().parent.parent / "ff_bot" / "data"
     out_dir = out_root / args.league
     out_dir.mkdir(parents=True, exist_ok=True)
 

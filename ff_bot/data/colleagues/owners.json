@@ -1,0 +1,15 @@
+{
+  "_comment": "Cross-era owner identity for all-time/YoY reports. espn_key is the uppercased first token of the ESPN owner name; sleeper is the exact Sleeper display_name. The all-time reader maps each frozen season's owner to a canonical person via this table.",
+  "owners": {
+    "Ben Osowski": { "espn_key": "BEN", "sleeper": "thenomads" },
+    "Conner Frey": { "espn_key": "CONNER", "sleeper": "BrotherSpankus" },
+    "Cory Kanz": { "espn_key": "CORY", "sleeper": "ckanz9" },
+    "Greg Steuterman": { "espn_key": "GREG", "sleeper": "gsteuter" },
+    "Jae Williams": { "espn_key": "JAE", "sleeper": "jaewill4" },
+    "Luke Gerken": { "espn_key": "LUKE", "sleeper": "LGerken" },
+    "Nick Troutman": { "espn_key": "NICK", "sleeper": "NickTroutman2291" },
+    "Robert McClary": { "espn_key": "ROBERT", "sleeper": "mrmcmerrill" },
+    "Scott Baptiste": { "espn_key": "SCOTT", "sleeper": "sbaptist614" },
+    "Will Raybuck": { "espn_key": "WILL", "sleeper": "wraybuck91" }
+  }
+}
