@@ -1,3 +1,5 @@
+"""Entry point that dispatches a named report and posts it to the configured chat platforms."""
+
 import datetime
 import logging
 
@@ -13,6 +15,12 @@ logger = logging.getLogger(__name__)
 
 
 def espn_bot(function):
+    """Run the report named by `function`, then send the result to GroupMe/Slack/Discord.
+
+    `function` is one of the scheduler's report names (e.g. "get_matchups", "get_final").
+    Each report is prefixed with a time-of-day salutation. In TEST mode every report is
+    printed to stdout instead of being posted, and the dispatch is forced to "get_final".
+    """
     data = get_env_vars()
     init_msg = data['init_msg']
     bot = GroupMeBot(data['bot_id'])
@@ -32,11 +40,13 @@ def espn_bot(function):
     daily_waiver = data['daily_waiver']
     monitor_report = data['monitor_report']
 
+    # Public leagues need no credentials; private leagues require SWID + espn_s2 cookies.
     if swid == '{1}' or espn_s2 == '1':
         league = League(league_id=league_id, year=year)
     else:
         league = League(league_id=league_id, year=year, espn_s2=espn_s2, swid=swid)
 
+    # Bail out once the season is over (current scoring period is past the last matchup week).
     if league.scoringPeriodId > len(league.settings.matchup_periods):
         print("Not in active season")
         return
@@ -60,6 +70,8 @@ def espn_bot(function):
         print(espn.optimal_team_scores(league, full_report=True))
         print(f"YOY: {yoy}")
         if yoy and swid != '{1}' and espn_s2 != '1':
+            # Expected wins is floored at 2019: ESPN box-score data isn't usable in this
+            # format before then. Power rankings work further back, so they use league_year_start.
             print(espn.get_yoy_expected_win_record(league_id, swid, espn_s2, 2019, year))
             print(espn.get_yoy_power_rankings(league_id, swid, espn_s2, league_year_start, year))
         print(f"Top Half Scoring = {top_half_scoring}\n")
@@ -102,6 +114,7 @@ def espn_bot(function):
             text = f"Ga. {espn.get_yoy_power_rankings(league_id, swid, espn_s2, league_year_start, year)}"
     elif function == "get_yoy_expected_win_record":
         if yoy and swid != '{1}' and espn_s2 != '1':
+            # 2019 floor: ESPN box-score data isn't usable in this format before 2019.
             text = f"Ga. {espn.get_yoy_expected_win_record(league_id, swid, espn_s2, 2019, year)}"
     elif function == "get_trophies":
         text = f"Gm. {espn.get_trophies(league)}"
@@ -132,6 +145,7 @@ def espn_bot(function):
     else:
         text = "Something happened. HALP"
 
+    # Post to every configured platform, splitting into chunks if over the char limit.
     if text != '' and not test:
         messages = utils.str_limit_check(text, data['str_limit'])
         for message in messages:

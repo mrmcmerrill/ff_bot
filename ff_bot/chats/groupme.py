@@ -8,7 +8,8 @@ class GroupMeException(Exception):
     pass
 
 class GroupMeBot(object):
-    # Creates GroupMe Bot to send messages
+    """Posts messages to a GroupMe group via a bot id."""
+
     def __init__(self, bot_id):
         self.bot_id = bot_id
 
@@ -16,7 +17,7 @@ class GroupMeBot(object):
         return "GroupMeBot(%s)" % self.bot_id
 
     def send_message(self, text):
-        # Sends a message to the chatroom
+        """Post text to the GroupMe group; no-op if no real bot id is configured."""
         template = {
             "bot_id": self.bot_id,
             "text": text, #limit 1000 chars

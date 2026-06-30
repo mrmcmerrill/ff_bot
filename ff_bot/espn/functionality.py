@@ -5,6 +5,7 @@ import ff_bot.utils as utils
 
 
 def get_scoreboard_short(league, week=None):
+    """Return a compact scoreboard of actual scores for the given week (current week if None)."""
     box_scores = league.box_scores(week=week)
     score = [f"{i.home_team.team_abbrev} {i.home_score:.2f} - {i.away_score:.2f} {i.away_team.team_abbrev}"
              for i in box_scores if i.away_team]
@@ -13,6 +14,7 @@ def get_scoreboard_short(league, week=None):
 
 
 def get_projected_scoreboard(league, week=None):
+    """Return a scoreboard using projected (rather than actual) totals for the given week."""
     box_scores = league.box_scores(week=week)
     score = [f"{i.home_team.team_abbrev} {get_projected_total(i.home_lineup):.2f} - "
              f"{get_projected_total(i.away_lineup):.2f} {i.away_team.team_abbrev}"
@@ -22,6 +24,7 @@ def get_projected_scoreboard(league, week=None):
 
 
 def get_expected_win_total(league, week=None):
+    """Return each team's expected win/loss record, sorted, based on how they'd fare against the whole league each week."""
     exp_win_rec = expected_win_record(league, week=week)
     records = [f"{i[1]['wins']}-{i[1]['losses']}-{i[1]['ties']} ({i[1]['pct']}) - {i[0].team_name}"
                for i in exp_win_rec]
@@ -30,9 +33,16 @@ def get_expected_win_total(league, week=None):
 
 
 def get_yoy_expected_win_record(league_id, swid, espn_s2, league_year_start, year):
+    """Aggregate expected wins across every season from league_year_start to year.
+
+    Returns an all-time expected-wins leaderboard plus the best and worst single-season
+    expected records. Owners are keyed by the first token of their (uppercased) name so
+    they stay consistent across seasons even if team names change.
+    """
     league = League(league_id=league_id, year=year, swid=swid, espn_s2=espn_s2)
     league_years = list(range(league_year_start, year + 1))
 
+    # owner -> {season -> record}; primed with zeros so every owner/season cell exists
     year_expected_dict = {
         i.owner.upper().split(" ", 1)[0]: {
             x: {'wins': 0, 'losses': 0, 'ties': 0, 'pct': 0.0}
@@ -44,6 +54,8 @@ def get_yoy_expected_win_record(league_id, swid, espn_s2, league_year_start, yea
     for yoy_year in league_years:
         league = League(league_id=league_id, year=yoy_year, swid=swid, espn_s2=espn_s2)
 
+        # Past seasons use the full regular season (15 weeks since 2022, 14 before);
+        # the current season only counts weeks that have already finished.
         if yoy_year != year:
             current_week = 15 if yoy_year >= 2022 else 14
         else:
@@ -115,10 +127,18 @@ def get_yoy_expected_win_record(league_id, swid, espn_s2, league_year_start, yea
 
 
 def expected_win_record(league, week):
+    """Compute each team's expected record up to the given week.
+
+    For every week, each team is scored against every other team's score that week;
+    the resulting win/loss/tie tallies are summed across weeks. This measures how a
+    team would do against the whole league rather than just its actual opponent.
+    Returns a list of (team, record) tuples sorted by expected wins, descending.
+    """
     lastWeek = league.current_week
     if week:
         lastWeek = week
 
+    # Per-week projected records and raw scores, plus the season-total accumulator.
     projRecDicts = {i: {x: {'wins': 0, 'losses': 0, 'ties': 0} for x in league.teams} for i in range(lastWeek)}
     teamScoreDicts = {i: {x: None for x in league.teams} for i in range(lastWeek)}
     powerRankingDict = {x: {'wins': 0, 'losses': 0, 'ties': 0, 'pct': 0.0} for x in league.teams}
@@ -130,6 +150,7 @@ def expected_win_record(league, week):
             teamScoreDicts[i][box.home_team] = box.home_score
             teamScoreDicts[i][box.away_team] = box.away_score
 
+        # Tally this team's record as if it had played every other team this week.
         for team in teamScoreDicts[i]:
             wins = 0
             losses = 0
@@ -143,7 +164,7 @@ def expected_win_record(league, week):
                 if teamScoreDicts[i][team] < teamScoreDicts[i][opp]:
                     losses += 1
 
-            if wins + losses != oppCount:
+            if wins + losses != oppCount:  # leftover comparisons were ties
                 ties = oppCount - wins - losses
 
             projRecDicts[i][team]['wins'] = wins
@@ -167,6 +188,11 @@ def expected_win_record(league, week):
 
 
 def get_standings(league, top_half_scoring, week=None):
+    """Return the current standings, sorted by wins then points-for.
+
+    When top_half_scoring is enabled, each team also earns a win for any week it
+    scored in the top half of the league, and those bonus wins are folded into the rank.
+    """
     standings_txt = ''
     teams = league.teams
     standings = []
@@ -199,6 +225,7 @@ def get_standings(league, top_half_scoring, week=None):
 
 
 def top_half_wins(league, top_half_totals, week):
+    """Add a win to each team that scored in the top half of the league for the given week."""
     box_scores = league.box_scores(week=week)
 
     scores = ([(i.home_score, i.home_team.team_name) for i in box_scores] +
@@ -214,6 +241,7 @@ def top_half_wins(league, top_half_totals, week):
 
 
 def get_projected_total(lineup):
+    """Sum a lineup's starters, using actual points once a player's game is underway, else projected."""
     total_projected = 0
     for i in lineup:
         if i.slot_position not in ('BE', 'IR'):
@@ -225,6 +253,7 @@ def get_projected_total(lineup):
 
 
 def all_played(lineup):
+    """Return True if every starter in the lineup has finished their game."""
     for i in lineup:
         if i.slot_position not in ('BE', 'IR') and i.game_played < 100:
             return False
@@ -232,6 +261,7 @@ def all_played(lineup):
 
 
 def get_monitor(league):
+    """Return a report of starters who are inactive/injured and yet to play this week."""
     box_scores = league.box_scores()
     monitor = []
     for i in box_scores:
@@ -246,6 +276,7 @@ def get_monitor(league):
 
 
 def scan_roster(lineup, team):
+    """List starters on a team who aren't active/normal and haven't played yet (worth monitoring)."""
     players = []
     for i in lineup:
         if (i.slot_position not in ('BE', 'IR')
@@ -260,6 +291,7 @@ def scan_roster(lineup, team):
 
 
 def scan_inactives(lineup, team):
+    """List starters likely to score nothing (out, doubtful, or non-positive projection) and yet to play."""
     players = []
     for i in lineup:
         if (i.slot_position not in ('BE', 'IR')
@@ -274,6 +306,7 @@ def scan_inactives(lineup, team):
 
 
 def get_matchups(league, league_name, week=None):
+    """Return the week's matchups with each team's record, capped with a random league phrase."""
     matchups = league.box_scores(week=week)
     score = [f"{i.home_team.team_name} ({i.home_team.wins}-{i.home_team.losses}) vs "
              f"{i.away_team.team_name} ({i.away_team.wins}-{i.away_team.losses})"
@@ -283,12 +316,14 @@ def get_matchups(league, league_name, week=None):
 
 
 def get_close_scores(league, week=None):
+    """Return matchups within ~16 points where the trailing team still has starters left to play."""
     matchups = league.box_scores(week=week)
     score = []
 
     for i in matchups:
         if i.away_team:
             diffScore = i.away_score - i.home_score
+            # Only flag a game if it's close AND the team that's behind can still gain ground.
             if (-16 < diffScore <= 0 and not all_played(i.away_lineup)) or \
                (0 <= diffScore < 16 and not all_played(i.home_lineup)):
                 score.append(f"{i.home_team.team_abbrev} {i.home_score:.2f} - {i.away_score:.2f} {i.away_team.team_abbrev}")
@@ -299,12 +334,14 @@ def get_close_scores(league, week=None):
 
 
 def get_waiver_report(league, faab):
+    """Summarize today's waiver-wire adds/drops, including FAAB bids when faab is enabled."""
     activities = league.recent_activity(50)
     report = []
     today = date.today().strftime('%Y-%m-%d')
 
     for activity in activities:
         actions = activity.actions
+        # activity.date is a millisecond epoch timestamp; only keep today's activity.
         d2 = date.fromtimestamp(activity.date / 1000).strftime('%Y-%m-%d')
         if d2 != today:
             continue
@@ -342,6 +379,11 @@ def get_waiver_report(league, faab):
 
 
 def get_starter_counts(league):
+    """Infer how many starters each slot position requires by inspecting last week's lineups.
+
+    Returns a dict mapping slot position -> number of starters. Reads from whichever team
+    fielded more starters, to guard against the rare matchup with an empty roster slot.
+    """
     week = league.current_week - 1
     box_scores = league.box_scores(week=week)
 
@@ -368,6 +410,11 @@ def get_starter_counts(league):
 
 
 def best_flex(flexes, player_pool, num):
+    """Pick the top `num` scorers eligible for a flex slot across the given positions.
+
+    Returns (best, player_pool): the chosen players and the player_pool with those
+    players removed so they can't also be selected for another slot.
+    """
     pool = {}
     for flex_position in flexes:
         pool = pool | player_pool.get(flex_position, {})
@@ -375,6 +422,7 @@ def best_flex(flexes, player_pool, num):
     pool = dict(sorted(pool.items(), key=lambda item: item[1], reverse=True))
     best = dict(list(pool.items())[:num])
 
+    # Remove the chosen flex players from the pool so they aren't double-counted.
     for pos in player_pool:
         for p in best:
             if p in player_pool[pos]:
@@ -383,9 +431,16 @@ def best_flex(flexes, player_pool, num):
 
 
 def optimal_lineup_score(lineup, starter_counts):
+    """Compute the best possible score a lineup could have produced.
+
+    Returns a tuple of (optimal score, actual score, points left on bench,
+    actual as a percentage of optimal). Fills required positions with the
+    highest scorers first, then resolves flex/OP/DP slots from what remains.
+    """
     best_lineup = {}
     position_players = {}
 
+    # Group every player by position, recording the actual lineup's starter score as we go.
     score = 0
     for player in lineup:
         if player.position not in position_players:
@@ -394,6 +449,7 @@ def optimal_lineup_score(lineup, starter_counts):
         if player.slot_position not in ('BE', 'IR'):
             score += player.points
 
+    # Fill each fixed position with its highest scorers, leaving the rest for flex slots.
     for position in starter_counts:
         if position in position_players:
             position_players[position] = dict(sorted(
@@ -403,6 +459,7 @@ def optimal_lineup_score(lineup, starter_counts):
         else:
             best_lineup[position] = {}
 
+    # Resolve standard flex slots (e.g. "RB/WR/TE"), skipping defensive D/ST slots.
     for position in starter_counts:
         if 'D/ST' not in position and '/' in position:
             flex = position.split('/')
@@ -410,12 +467,14 @@ def optimal_lineup_score(lineup, starter_counts):
             best_lineup[position] = result[0]
             position_players = result[1]
 
+    # Offensive Player slot: best remaining of any offensive position.
     if 'OP' in starter_counts:
         flex = ['RB', 'WR', 'TE', 'QB']
         result = best_flex(flex, position_players, starter_counts['OP'])
         best_lineup['OP'] = result[0]
         position_players = result[1]
 
+    # Defensive Player slot: best remaining of any individual defensive position.
     if 'DP' in starter_counts:
         flex = ['DT', 'DE', 'LB', 'CB', 'S']
         result = best_flex(flex, position_players, starter_counts['DP'])
@@ -428,6 +487,11 @@ def optimal_lineup_score(lineup, starter_counts):
 
 
 def optimal_team_scores(league, week=None, full_report=False):
+    """Compare each team's actual score against its optimal lineup for the week.
+
+    With full_report=True, returns a ranked text table of every team's optimal vs actual.
+    Otherwise returns a short best-manager / worst-manager summary (the trophy format).
+    """
     if not week:
         week = league.current_week - 1
     box_scores = league.box_scores(week=week)
@@ -477,6 +541,7 @@ def optimal_team_scores(league, week=None, full_report=False):
 
 
 def get_power_rankings(league, week=None):
+    """Return the week's power rankings (two-step dominance weighted with scoring and margin) plus playoff odds."""
     if not week:
         week = league.current_week
     power_rankings = league.power_rankings(week=week)
@@ -488,6 +553,11 @@ def get_power_rankings(league, week=None):
 
 
 def get_yoy_power_rankings(league_id, swid, espn_s2, league_year_start, year):
+    """Sum each owner's final power-ranking score across every season into an all-time leaderboard.
+
+    Also reports the single best and worst season power-ranking scores. Like the YoY expected-wins
+    report, owners are keyed by the first token of their name to stay stable across seasons.
+    """
     league_years = list(range(league_year_start, year + 1))
     league = League(league_id=league_id, year=year)
 
@@ -499,6 +569,7 @@ def get_yoy_power_rankings(league_id, swid, espn_s2, league_year_start, year):
     for yoy_year in league_years:
         league = League(league_id=league_id, year=yoy_year, swid=swid, espn_s2=espn_s2)
 
+        # Past seasons use the full regular season; current season counts finished weeks only.
         if yoy_year != year:
             current_week = 15 if yoy_year >= 2022 else 14
         else:
@@ -542,6 +613,7 @@ def get_yoy_power_rankings(league_id, swid, espn_s2, league_year_start, year):
 
 
 def get_lucky_trophy(league, week=None):
+    """Award the 'lucky' team (won despite a poor score vs the league) and the 'unlucky' team (lost despite a strong one)."""
     box_scores = league.box_scores(week=week)
     weekly_scores = {}
     for i in box_scores:
@@ -584,6 +656,7 @@ def get_lucky_trophy(league, week=None):
 
 
 def get_achiever_trophy(league, week=None):
+    """Award the teams that most beat (overachiever) and most missed (underachiever) their projected score."""
     box_scores = league.box_scores(week=week)
     over_achiever = ''
     under_achiever = ''
@@ -622,6 +695,7 @@ def get_achiever_trophy(league, week=None):
 
 
 def get_trophies(league, week=None):
+    """Build the full weekly trophy roundup: high/low score, blowout, closest win, plus the lucky, achiever, and optimal-lineup awards."""
     matchups = league.box_scores(week=week)
     low_score = 9999
     low_team_name = ''

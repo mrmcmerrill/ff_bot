@@ -3,6 +3,13 @@ import ff_bot.utils as utils
 
 
 def get_env_vars():
+    """Read all bot configuration from environment variables into a single dict.
+
+    Every setting has a sensible default except LEAGUE_ID, which is required. The
+    str_limit is tuned to the active messaging platform (GroupMe 1000, Discord 3000,
+    Slack 40000), and at least one of BOT_ID, SLACK_WEBHOOK_URL, or DISCORD_WEBHOOK_URL
+    must be set or an exception is raised.
+    """
     data = {}
 
     data['league_year_start'] = int(os.environ.get("LEAGUE_YEAR_START", 2017))
@@ -39,6 +46,7 @@ def get_env_vars():
     data['league_name'] = os.environ.get("LEAGUE_NAME", "colleagues")
     data['year'] = int(os.environ.get("LEAGUE_YEAR", 2023))
 
+    # ESPN's SWID cookie is expected wrapped in braces; add them if the user omitted them.
     swid = os.environ.get("SWID", "{1}")
     if not swid.startswith("{"):
         swid = "{" + swid
