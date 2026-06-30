@@ -6,6 +6,7 @@
   "teams": {
     "1": {
       "owner": "Jae Williams",
+      "owner_id": "{2192A6D3-965D-4DC9-B0EF-E30112E716CF}",
       "team_name": "Bathroom Baking Soda Bandits",
       "team_abbrev": "BLOW",
       "wins": 2,
@@ -15,6 +16,7 @@
     },
     "2": {
       "owner": "Will Raybuck",
+      "owner_id": "{4F51BBF2-E171-4C11-BAD3-F418CBB84826}",
       "team_name": "Fairway Lakes Apt. Management",
       "team_abbrev": "FLAM",
       "wins": 5,
@@ -24,6 +26,7 @@
     },
     "3": {
       "owner": "Conner Frey",
+      "owner_id": "{65D56042-0F8D-4586-8DFF-65CA0F52679D}",
       "team_name": "Shirtless Fight Club",
       "team_abbrev": "FREY",
       "wins": 8,
@@ -32,7 +35,8 @@
       "points_for": 1460.21
     },
     "4": {
-      "owner": "Ben  Osowski",
+      "owner": "Ben Osowski",
+      "owner_id": "{4ADB4278-E27D-4D3A-9A50-97F7FE8A3F58}",
       "team_name": "RoundTower MarketingIntern",
       "team_abbrev": "OFSX",
       "wins": 8,
@@ -42,6 +46,7 @@
     },
     "5": {
       "owner": "luke gerken",
+      "owner_id": "{0B0E75CF-4CF4-4683-8E75-CF4CF46683CE}",
       "team_name": "Smoothly Shaven Dude ",
       "team_abbrev": "SSD",
       "wins": 7,
@@ -51,6 +56,7 @@
     },
     "6": {
       "owner": "Greg Steuterman",
+      "owner_id": "{E152265B-69D7-4F75-AFBE-FAB53CFB8E97}",
       "team_name": "Hard Shell Tacos",
       "team_abbrev": "Sad!",
       "wins": 6,
@@ -60,6 +66,7 @@
     },
     "7": {
       "owner": "Nick Troutman",
+      "owner_id": "{83BCA57D-ABA2-4B6D-BCA5-7DABA2EB6D39}",
       "team_name": "Tongue Masters",
       "team_abbrev": "CLIT",
       "wins": 8,
@@ -69,6 +76,7 @@
     },
     "8": {
       "owner": "Scott Baptiste",
+      "owner_id": "{8B6EA832-16A9-4643-A01D-205DD7DAB804}",
       "team_name": "Meesa Luke's BackRoomHijinks",
       "team_abbrev": "EDGE",
       "wins": 7,
@@ -78,6 +86,7 @@
     },
     "9": {
       "owner": "Robert McClary",
+      "owner_id": "{7CF4EB1C-AA24-4483-8DFB-D29E11D6E7BB}",
       "team_name": "$3000 Edging",
       "team_abbrev": "3000",
       "wins": 6,
@@ -87,6 +96,7 @@
     },
     "10": {
       "owner": "Cory Kanz",
+      "owner_id": "{DB52BF56-BEB5-42B2-A94F-16CC21E6347D}",
       "team_name": "Penthouse College Fund",
       "team_abbrev": "PCF",
       "wins": 13,

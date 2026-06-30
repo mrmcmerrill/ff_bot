@@ -26,10 +26,24 @@ def _owner_name(team):
     if owners:
         first = owners[0]
         if isinstance(first, dict):
-            name = f"{first.get('firstName', '')} {first.get('lastName', '')}".strip()
+            # Collapse stray internal whitespace from messy ESPN name fields.
+            name = " ".join(f"{first.get('firstName', '')} {first.get('lastName', '')}".split())
             return name or first.get("displayName", "") or "UNKNOWN"
         return str(first)
     return getattr(team, "owner", None) or "UNKNOWN"
+
+
+def _owner_id(team):
+    """Return ESPN's stable owner GUID for the team's primary owner, if available.
+
+    The GUID is the ESPN account id and persists across seasons for the same person,
+    so it's a far more reliable cross-season key than the (mutable, collision-prone)
+    owner name. Returns None for old leagues/versions that don't expose it.
+    """
+    owners = getattr(team, "owners", None)
+    if owners and isinstance(owners[0], dict):
+        return owners[0].get("id")
+    return None
 
 
 def snapshot_year(league_id, year, swid, espn_s2):
@@ -41,6 +55,7 @@ def snapshot_year(league_id, year, swid, espn_s2):
     for t in league.teams:
         teams[str(t.team_id)] = {
             "owner": _owner_name(t),
+            "owner_id": _owner_id(t),
             "team_name": t.team_name,
             "team_abbrev": t.team_abbrev,
             "wins": t.wins,

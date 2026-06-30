@@ -56,42 +56,56 @@ def load_crosswalk(league, data_dir=None):
     return espn_to_canon, sleeper_to_canon
 
 
-def _canonical(provider, owner, espn_to_canon, sleeper_to_canon):
-    """Map a snapshot's raw owner to its canonical person.
+def _identity(team, provider, espn_to_canon, sleeper_to_canon):
+    """Return (key, display) for a team's owner.
 
-    Falls back to the provider's own identity key when there's no crosswalk entry,
-    which keeps single-provider leagues (no owners.json) working unchanged.
+    The key is what owners are aggregated by across seasons; display is what's shown.
+    Resolution order:
+      1. An explicit owners.json crosswalk entry (cross-platform leagues like colleagues).
+      2. ESPN's stable owner GUID, when present (single-provider ESPN leagues like dale) —
+         robust to name changes and first-name collisions that broke the old name-keying.
+      3. Fall back to the provider's own identity (ESPN name token / Sleeper display_name).
     """
+    owner = team["owner"]
     if provider == "espn":
-        key = owner.upper().split(" ", 1)[0]
-        return espn_to_canon.get(key, key)
-    return sleeper_to_canon.get(owner, owner)
+        token = owner.upper().split(" ", 1)[0]
+        if token in espn_to_canon:
+            canonical = espn_to_canon[token]
+            return canonical, canonical
+        owner_id = team.get("owner_id")
+        if owner_id:
+            return owner_id, owner
+        return token, owner
+    if owner in sleeper_to_canon:
+        canonical = sleeper_to_canon[owner]
+        return canonical, canonical
+    return owner, owner
 
 
 def _owner_map(snapshot, espn_to_canon, sleeper_to_canon):
-    """Build team_id -> canonical owner for one season's snapshot."""
+    """Build team_id -> (key, display) for one season's snapshot."""
     provider = snapshot["provider"]
     return {
-        tid: _canonical(provider, team["owner"], espn_to_canon, sleeper_to_canon)
+        tid: _identity(team, provider, espn_to_canon, sleeper_to_canon)
         for tid, team in snapshot["teams"].items()
     }
 
 
 def _games(snapshot, owner_of):
-    """Yield head-to-head games as (owner_a, score_a, owner_b, score_b) tuples."""
+    """Yield head-to-head games as (key_a, score_a, key_b, score_b) tuples."""
     for week in snapshot["matchups"].values():
         for m in week:
-            yield (owner_of[m["home"]], m["home_score"],
-                   owner_of[m["away"]], m["away_score"])
+            yield (owner_of[m["home"]][0], m["home_score"],
+                   owner_of[m["away"]][0], m["away_score"])
 
 
 def _weekly_scores(snapshot, owner_of):
-    """Yield per-week {canonical_owner: score} maps."""
+    """Yield per-week {owner_key: score} maps."""
     for week in snapshot["matchups"].values():
         scores = {}
         for m in week:
-            scores[owner_of[m["home"]]] = m["home_score"]
-            scores[owner_of[m["away"]]] = m["away_score"]
+            scores[owner_of[m["home"]][0]] = m["home_score"]
+            scores[owner_of[m["away"]][0]] = m["away_score"]
         yield scores
 
 
@@ -114,23 +128,26 @@ def get_all_time_power_rankings(league, data_dir=None):
         return ""
 
     totals = defaultdict(float)
-    best = None   # (score, owner, season)
+    display = {}   # owner key -> most recent display name
+    best = None    # (score, display_name, season)
     worst = None
-    for snap in seasons:
+    for snap in seasons:  # oldest-first, so later seasons overwrite the display name
         owner_of = _owner_map(snap, e2c, s2c)
+        for key, name in owner_of.values():
+            display[key] = name
         rankings = compute_power_rankings(_games(snap, owner_of))
-        for score, owner in rankings:
-            totals[owner] += score
+        for score, key in rankings:
+            totals[key] += score
             if best is None or score > best[0]:
-                best = (score, owner, snap["season"])
+                best = (score, display[key], snap["season"])
             if worst is None or score < worst[0]:
-                worst = (score, owner, snap["season"])
+                worst = (score, display[key], snap["season"])
 
     ranked = sorted(totals.items(), key=lambda kv: kv[1], reverse=True)
     span = (seasons[0]["season"], seasons[-1]["season"])
 
     text = [f"🏆 All-Time Power Rankings {span[0]}-{span[1]} 🏆"]
-    text += [f"{round(total, 1)} - {owner}" for owner, total in ranked]
+    text += [f"{round(total, 1)} - {display[key]}" for key, total in ranked]
     high = [f"\n🥇 High Single Season PR 🥇\n{best[1]} - {best[2]}: {best[0]}"]
     low = [f"🚮 Low Single Season PR 🚮\n{worst[1]} - {worst[2]}: {worst[0]}"]
     return "\n".join(text + high + low)
@@ -143,28 +160,31 @@ def get_all_time_expected_wins(league, data_dir=None):
         return ""
 
     totals = defaultdict(lambda: {"wins": 0, "losses": 0, "ties": 0})
-    best = None   # (wins, record_str, owner, season)
+    display = {}   # owner key -> most recent display name
+    best = None    # (wins, record_str, display_name, season)
     worst = None
-    for snap in seasons:
+    for snap in seasons:  # oldest-first, so later seasons overwrite the display name
         owner_of = _owner_map(snap, e2c, s2c)
+        for key, name in owner_of.values():
+            display[key] = name
         records = expected_win_record(_weekly_scores(snap, owner_of))
-        for owner, rec in records.items():
-            totals[owner]["wins"] += rec["wins"]
-            totals[owner]["losses"] += rec["losses"]
-            totals[owner]["ties"] += rec["ties"]
+        for key, rec in records.items():
+            totals[key]["wins"] += rec["wins"]
+            totals[key]["losses"] += rec["losses"]
+            totals[key]["ties"] += rec["ties"]
 
             rec_str = f"{rec['wins']}-{rec['losses']}-{rec['ties']} ({_fmt_pct(win_pct(rec))})"
             if best is None or rec["wins"] > best[0]:
-                best = (rec["wins"], rec_str, owner, snap["season"])
+                best = (rec["wins"], rec_str, display[key], snap["season"])
             if worst is None or rec["wins"] < worst[0]:
-                worst = (rec["wins"], rec_str, owner, snap["season"])
+                worst = (rec["wins"], rec_str, display[key], snap["season"])
 
     ranked = sorted(totals.items(), key=lambda kv: kv[1]["wins"], reverse=True)
     span = (seasons[0]["season"], seasons[-1]["season"])
 
     text = [f"🏆 All-Time Expected Wins {span[0]}-{span[1]} 🏆"]
-    for owner, rec in ranked:
-        text.append(f"{rec['wins']}-{rec['losses']}-{rec['ties']} ({_fmt_pct(win_pct(rec))}) - {owner}")
+    for key, rec in ranked:
+        text.append(f"{rec['wins']}-{rec['losses']}-{rec['ties']} ({_fmt_pct(win_pct(rec))}) - {display[key]}")
     high = [f"\n🥇 High Single Season Exp Wins 🥇\n{best[2]} - {best[3]}: {best[1]}"]
     low = [f"🚮 Low Single Season Exp Wins 🚮\n{worst[2]} - {worst[3]}: {worst[1]}"]
     return "\n".join(text + high + low)

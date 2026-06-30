@@ -1,6 +1,5 @@
 from datetime import date
 from operator import itemgetter
-from espn_api.football import League
 import ff_bot.utils as utils
 
 
@@ -30,100 +29,6 @@ def get_expected_win_total(league, week=None):
                for i in exp_win_rec]
     text = ['League Expected Wins %'] + records
     return '\n'.join(text)
-
-
-def get_yoy_expected_win_record(league_id, swid, espn_s2, league_year_start, year):
-    """Aggregate expected wins across every season from league_year_start to year.
-
-    Returns an all-time expected-wins leaderboard plus the best and worst single-season
-    expected records. Owners are keyed by the first token of their (uppercased) name so
-    they stay consistent across seasons even if team names change.
-    """
-    league = League(league_id=league_id, year=year, swid=swid, espn_s2=espn_s2)
-    league_years = list(range(league_year_start, year + 1))
-
-    # owner -> {season -> record}; primed with zeros so every owner/season cell exists
-    year_expected_dict = {
-        i.owner.upper().split(" ", 1)[0]: {
-            x: {'wins': 0, 'losses': 0, 'ties': 0, 'pct': 0.0}
-            for x in league_years
-        }
-        for i in league.teams
-    }
-
-    for yoy_year in league_years:
-        league = League(league_id=league_id, year=yoy_year, swid=swid, espn_s2=espn_s2)
-
-        # Past seasons use the full regular season (15 weeks since 2022, 14 before);
-        # the current season only counts weeks that have already finished.
-        if yoy_year != year:
-            current_week = 15 if yoy_year >= 2022 else 14
-        else:
-            current_week = league.current_week - 1
-
-        temp_expected = expected_win_record(league, current_week)
-
-        for team in temp_expected:
-            owner_key = team[0].owner.upper().split(" ", 1)[0]
-            year_expected_dict[owner_key][yoy_year]['wins'] = team[1]['wins']
-            year_expected_dict[owner_key][yoy_year]['losses'] = team[1]['losses']
-            year_expected_dict[owner_key][yoy_year]['ties'] = team[1]['ties']
-            year_expected_dict[owner_key][yoy_year]['pct'] = team[1]['pct']
-
-    total_team_expected = {
-        i.owner.upper().split(" ", 1)[0]: {'wins': 0, 'losses': 0, 'ties': 0, 'pct': 0.0}
-        for i in league.teams
-    }
-
-    low_score = 9999
-    low_score_owner = ''
-    low_score_year = ''
-    low_score_out = ''
-    high_score = -1
-    high_score_owner = ''
-    high_score_year = ''
-    high_score_out = ''
-
-    for owner in year_expected_dict:
-        for yr in year_expected_dict[owner]:
-            temp_wins = int(year_expected_dict[owner][yr]['wins'])
-            temp_losses = int(year_expected_dict[owner][yr]['losses'])
-            temp_ties = int(year_expected_dict[owner][yr]['ties'])
-            temp_opps = temp_wins + temp_losses + temp_ties
-            temp_pct = round(temp_wins / temp_opps, 3)
-
-            if temp_wins > high_score:
-                high_score = temp_wins
-                high_score_out = f"{temp_wins}-{temp_losses}-{temp_ties} ({temp_pct:.3f}".lstrip('0') + ")"
-                high_score_owner = str(owner)
-                high_score_year = str(yr)
-            elif temp_wins < low_score:
-                low_score = temp_wins
-                low_score_out = f"{temp_wins}-{temp_losses}-{temp_ties} ({temp_pct:.3f}".lstrip('0') + ")"
-                low_score_owner = str(owner)
-                low_score_year = str(yr)
-
-            total_team_expected[owner]['wins'] += temp_wins
-            total_team_expected[owner]['losses'] += temp_losses
-            total_team_expected[owner]['ties'] += temp_ties
-
-            temp_total_opps = (total_team_expected[owner]['wins'] +
-                               total_team_expected[owner]['losses'] +
-                               total_team_expected[owner]['ties'])
-            temp_total_pct = round(total_team_expected[owner]['wins'] / temp_total_opps, 3)
-            total_team_expected[owner]['pct'] = f"{temp_total_pct:.3f}".lstrip('0')
-
-    total_team_expected_sorted = sorted(total_team_expected.items(), key=lambda x: x[1]['wins'], reverse=True)
-
-    total_team_expected_wins = [
-        f"{i[1]['wins']}-{i[1]['losses']}-{i[1]['ties']} ({i[1]['pct']}) - {i[0]}"
-        for i in total_team_expected_sorted if i
-    ]
-
-    text = [f"🏆 All-Time Expected Wins {league_year_start}-{year} 🏆"] + total_team_expected_wins
-    low_score_text = [f"🚮 Low Single Season Exp Wins 🚮\n{low_score_owner} - {low_score_year}: {low_score_out}"]
-    high_score_text = [f"\n🥇 High Single Season Exp Wins 🥇\n{high_score_owner} - {high_score_year}: {high_score_out}"]
-    return '\n'.join(text + high_score_text + low_score_text)
 
 
 def expected_win_record(league, week):
@@ -550,66 +455,6 @@ def get_power_rankings(league, week=None):
              for i in power_rankings if i]
     text = ['Power Rankings (Playoff %)'] + score
     return '\n'.join(text)
-
-
-def get_yoy_power_rankings(league_id, swid, espn_s2, league_year_start, year):
-    """Sum each owner's final power-ranking score across every season into an all-time leaderboard.
-
-    Also reports the single best and worst season power-ranking scores. Like the YoY expected-wins
-    report, owners are keyed by the first token of their name to stay stable across seasons.
-    """
-    league_years = list(range(league_year_start, year + 1))
-    league = League(league_id=league_id, year=year)
-
-    team_rankings = {
-        i.owner.upper().split(" ", 1)[0]: {x: 0.0 for x in league_years}
-        for i in league.teams
-    }
-
-    for yoy_year in league_years:
-        league = League(league_id=league_id, year=yoy_year, swid=swid, espn_s2=espn_s2)
-
-        # Past seasons use the full regular season; current season counts finished weeks only.
-        if yoy_year != year:
-            current_week = 15 if yoy_year >= 2022 else 14
-        else:
-            current_week = league.current_week - 1
-
-        power_rankings = league.power_rankings(week=current_week)
-
-        for i in power_rankings:
-            team_rankings[i[1].owner.upper().split(" ", 1)[0]][yoy_year] = i[0]
-
-    alltime_total = {i.owner.upper().split(" ", 1)[0]: 0.0 for i in league.teams}
-
-    low_score = 9999.9
-    low_score_owner = ''
-    low_score_year = 0
-    high_score = -1.1
-    high_score_owner = ''
-    high_score_year = 0
-
-    for owner in team_rankings:
-        for yr in team_rankings[owner]:
-            score_val = float(team_rankings[owner][yr])
-            if score_val > high_score:
-                high_score = score_val
-                high_score_owner = owner
-                high_score_year = yr
-            elif score_val < low_score:
-                low_score = score_val
-                low_score_owner = owner
-                low_score_year = yr
-
-            alltime_total[owner] = round(alltime_total[owner] + score_val, 2)
-
-    alltime_total_sorted = sorted(alltime_total.items(), key=lambda x: x[1], reverse=True)
-    alltime_score = [f"{score[1]} - {score[0]}" for score in alltime_total_sorted if score]
-
-    text = [f"🏆 All-Time Power Rankings {league_year_start}-{year} 🏆"] + alltime_score
-    low_score_text = [f"🚮 Low Single Season PR 🚮\n{low_score_owner} - {low_score_year}: {low_score}"]
-    high_score_text = [f"\n🥇 High Single Season PR 🥇\n{high_score_owner} - {high_score_year}: {high_score}"]
-    return '\n'.join(text + high_score_text + low_score_text)
 
 
 def get_lucky_trophy(league, week=None):

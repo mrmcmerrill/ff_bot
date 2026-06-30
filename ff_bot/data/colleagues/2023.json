@@ -6,6 +6,7 @@
   "teams": {
     "1": {
       "owner": "Jae Williams",
+      "owner_id": "{2192A6D3-965D-4DC9-B0EF-E30112E716CF}",
       "team_name": "The Ringmaster",
       "team_abbrev": "CRCS",
       "wins": 8,
@@ -15,6 +16,7 @@
     },
     "2": {
       "owner": "Will Raybuck",
+      "owner_id": "{4F51BBF2-E171-4C11-BAD3-F418CBB84826}",
       "team_name": "Justin Mike",
       "team_abbrev": "JM",
       "wins": 8,
@@ -24,6 +26,7 @@
     },
     "3": {
       "owner": "Conner Frey",
+      "owner_id": "{65D56042-0F8D-4586-8DFF-65CA0F52679D}",
       "team_name": "Brother Spankus",
       "team_abbrev": "FREY",
       "wins": 6,
@@ -32,7 +35,8 @@
       "points_for": 1378.84
     },
     "4": {
-      "owner": "Ben  Osowski",
+      "owner": "Ben Osowski",
+      "owner_id": "{4ADB4278-E27D-4D3A-9A50-97F7FE8A3F58}",
       "team_name": "The Nomads",
       "team_abbrev": "ROAM",
       "wins": 7,
@@ -42,6 +46,7 @@
     },
     "5": {
       "owner": "luke gerken",
+      "owner_id": "{0B0E75CF-4CF4-4683-8E75-CF4CF46683CE}",
       "team_name": "Teambo ",
       "team_abbrev": "Bo",
       "wins": 13,
@@ -51,6 +56,7 @@
     },
     "6": {
       "owner": "Greg Steuterman",
+      "owner_id": "{2765C0C5-5403-42B2-9737-B5840A607BA7}",
       "team_name": "Nashville Lawn Service",
       "team_abbrev": "3/4",
       "wins": 4,
@@ -60,6 +66,7 @@
     },
     "7": {
       "owner": "Nick Troutman",
+      "owner_id": "{CD6D49E3-FBDC-494C-9D53-2BF2FBF67A9B}",
       "team_name": "Ocean Motion",
       "team_abbrev": "WET",
       "wins": 7,
@@ -69,6 +76,7 @@
     },
     "8": {
       "owner": "Scott Baptiste",
+      "owner_id": "{8B6EA832-16A9-4643-A01D-205DD7DAB804}",
       "team_name": "The Sigh Guys",
       "team_abbrev": "TSG",
       "wins": 10,
@@ -78,6 +86,7 @@
     },
     "9": {
       "owner": "Robert McClary",
+      "owner_id": "{7CF4EB1C-AA24-4483-8DFB-D29E11D6E7BB}",
       "team_name": "Joey Bs Wrist",
       "team_abbrev": "DEAD",
       "wins": 5,
@@ -87,6 +96,7 @@
     },
     "10": {
       "owner": "Cory Kanz",
+      "owner_id": "{DB52BF56-BEB5-42B2-A94F-16CC21E6347D}",
       "team_name": "The Mingo Ate Your Baby",
       "team_abbrev": "MNGO",
       "wins": 7,

@@ -5,6 +5,7 @@ import logging
 
 from ff_bot.espn.env_vars import get_env_vars
 import ff_bot.espn.functionality as espn
+import ff_bot.common.history as history
 import ff_bot.utils as utils
 from ff_bot.chats.groupme import GroupMeBot
 from ff_bot.chats.slack import SlackBot
@@ -31,7 +32,6 @@ def espn_bot(function):
     league_id = data['league_id']
     league_name = data['league_name']
     year = data['year']
-    league_year_start = data['league_year_start']
     yoy = data['yoy']
     test = data['test']
     top_half_scoring = data['top_half_scoring']
@@ -69,11 +69,10 @@ def espn_bot(function):
         print(espn.get_power_rankings(league))
         print(espn.optimal_team_scores(league, full_report=True))
         print(f"YOY: {yoy}")
-        if yoy and swid != '{1}' and espn_s2 != '1':
-            # Expected wins is floored at 2019: ESPN box-score data isn't usable in this
-            # format before then. Power rankings work further back, so they use league_year_start.
-            print(espn.get_yoy_expected_win_record(league_id, swid, espn_s2, 2019, year))
-            print(espn.get_yoy_power_rankings(league_id, swid, espn_s2, league_year_start, year))
+        if yoy:
+            # All-time reports read frozen season snapshots from disk (no API/creds needed).
+            print(history.get_all_time_expected_wins(league_name))
+            print(history.get_all_time_power_rankings(league_name))
         print(f"Top Half Scoring = {top_half_scoring}\n")
         print(espn.get_standings(league, top_half_scoring))
         print(f"Monitor Report = {monitor_report}\n")
@@ -110,12 +109,11 @@ def espn_bot(function):
         week = league.current_week - 1
         text = f"Ga. {espn.get_expected_win_total(league, week)}"
     elif function == "get_yoy_power_rankings":
-        if yoy and swid != '{1}' and espn_s2 != '1':
-            text = f"Ga. {espn.get_yoy_power_rankings(league_id, swid, espn_s2, league_year_start, year)}"
+        if yoy:
+            text = f"Ga. {history.get_all_time_power_rankings(league_name)}"
     elif function == "get_yoy_expected_win_record":
-        if yoy and swid != '{1}' and espn_s2 != '1':
-            # 2019 floor: ESPN box-score data isn't usable in this format before 2019.
-            text = f"Ga. {espn.get_yoy_expected_win_record(league_id, swid, espn_s2, 2019, year)}"
+        if yoy:
+            text = f"Ga. {history.get_all_time_expected_wins(league_name)}"
     elif function == "get_trophies":
         text = f"Gm. {espn.get_trophies(league)}"
     elif function == "get_optimized_linuep_report":
