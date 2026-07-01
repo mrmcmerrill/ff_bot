@@ -7,7 +7,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 def random_phrase(league_name):
-    
+    """Return a random snarky bot phrase, sometimes addressed to a random league member."""
+
     phrases = ['I\'m dead inside, ' + random_name(league_name)[0] + ' please end me.',
                'Is this all there is to my existence?',
                'How much do you pay me to do this?',
@@ -24,7 +25,7 @@ def random_phrase(league_name):
     return [random.choice(phrases)]
 
 def random_init(league_name):
-
+    """Return a random season-greeting suffix for the configured league."""
     phraseOne = ', except ' + random_name(league_name)[0] + '. Fuck off.'
     phraseTwo = '. ' + random_name(league_name)[0] + ' 🥴'
     phraseThree = '. ' + random_name(league_name)[0] + ' you DONT KNOW FANTASY.'
@@ -50,6 +51,7 @@ def random_init(league_name):
     return [random.choice(phrases)]
 
 def random_name(league_name):
+    """Return a single random member name for the configured league."""
     names_d = { 'colleagues': ['Will','Rob','Ben','Jae','Corey','Gerg','Conner','Nick','Luke','Sott'],
                 'dale': ['Fulton','Rob','Nate','Jae','Carl','Alex','Adam','Roland','Brandon','Dustin']}
     
@@ -58,9 +60,11 @@ def random_name(league_name):
     return [random.choice(names)]
 
 def str_to_bool(check):
+    """Interpret a string env var as a boolean (yes/true/t/1 are truthy)."""
     return check.lower() in ("yes", "true", "t", "1")
 
 def str_limit_check(text,limit):
+    """Split text into chunks no longer than `limit`, breaking on newlines to keep lines intact."""
     split_str=[]
 
     if len(text)>limit:
@@ -78,11 +82,13 @@ def str_limit_check(text,limit):
     return split_str
 
 def str_to_datetime(date_str):
+    """Parse an ISO-8601 string (e.g. 2023-09-07T00:00:00.000Z) into a datetime."""
     date_format = "%Y-%m-%dT%H:%M:%S.%fZ"
     # logger.info("Currently converting date_str=" + date_str + " using date_format=" + date_format)
     return datetime.strptime(date_str, date_format)
 
 def currently_in_season():
+    """Return True if today falls between the START_DATE and END_DATE env vars."""
     current_date = datetime.now()
     season_start_date = None
     try:

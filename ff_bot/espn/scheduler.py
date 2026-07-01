@@ -3,6 +3,12 @@ from ff_bot.espn.espn_bot import espn_bot
 from ff_bot.espn.env_vars import get_env_vars
 
 def scheduler():
+    """Register every recurring report as a cron job and block, running until the season ends.
+
+    Jobs run between START_DATE and END_DATE. Game-related reports use the game timezone
+    (US Eastern), while the rest use the league's local TIMEZONE. Waiver, year-over-year,
+    and monitor jobs are only scheduled when their corresponding env flags are enabled.
+    """
     data = get_env_vars()
     game_timezone = 'America/New_York'
     sched = BlockingScheduler(job_defaults={'misfire_grace_time': 15*60})

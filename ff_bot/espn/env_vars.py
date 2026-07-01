@@ -1,164 +1,81 @@
 import os
-import ff_bot.espn.functionality as espn
 import ff_bot.utils as utils
 
+
 def get_env_vars():
+    """Read all bot configuration from environment variables into a single dict.
+
+    PROVIDER ('espn' or 'sleeper', default 'espn') selects which platform the current
+    live season runs on. An ESPN league requires LEAGUE_ID; a Sleeper league requires
+    SLEEPER_LEAGUE_ID. (All-time reports read frozen snapshots regardless of provider.)
+
+    The str_limit is tuned to the active messaging platform (GroupMe 1000, Discord 3000,
+    Slack 40000), and at least one of BOT_ID, SLACK_WEBHOOK_URL, or DISCORD_WEBHOOK_URL
+    must be set or an exception is raised.
+    """
     data = {}
-    
-    try: 
-        league_year_start = int(os.environ["LEAGUE_YEAR_START"])
-    except KeyError:
-        league_year_start = 2017
-    
-    data['league_year_start'] = league_year_start
-    
-    try:
-        yoy = utils.str_to_bool(os.environ["YOY"])
-    except KeyError:
-        yoy = False
-        
-    data['yoy'] = yoy 
-    
-    try:
-        ff_start_date = os.environ["START_DATE"]
-    except KeyError:
-        ff_start_date = '2024-09-05'
 
-    data['ff_start_date'] = ff_start_date
+    data['league_year_start'] = int(os.environ.get("LEAGUE_YEAR_START", 2017))
+    data['yoy'] = utils.str_to_bool(os.environ.get("YOY", "false"))
+    data['ff_start_date'] = os.environ.get("START_DATE", "2023-09-07")
+    data['ff_end_date'] = os.environ.get("END_DATE", "2024-01-09")
+    data['my_timezone'] = os.environ.get("TIMEZONE", "America/New_York")
+    data['daily_waiver'] = utils.str_to_bool(os.environ.get("DAILY_WAIVER", "false"))
+    data['weekly_waiver'] = utils.str_to_bool(os.environ.get("WEEKLY_WAIVER", "false"))
+    data['monitor_report'] = utils.str_to_bool(os.environ.get("MONITOR_REPORT", "false"))
 
-    try:
-        ff_end_date = os.environ["END_DATE"]
-    except KeyError:
-        ff_end_date = '2025-01-09'
+    str_limit = 40000  # slack char limit
 
-    data['ff_end_date'] = ff_end_date
-
-    try:
-        my_timezone = os.environ["TIMEZONE"]
-    except KeyError:
-        my_timezone = 'America/New_York'
-
-    data['my_timezone'] = my_timezone
-
-    try:
-        daily_waiver = utils.str_to_bool(os.environ["DAILY_WAIVER"])
-    except KeyError:
-        daily_waiver = False
-        
-    data['daily_waiver'] = daily_waiver    
-    
-    try:
-        weekly_waiver = utils.str_to_bool(os.environ["WEEKLY_WAIVER"])
-    except KeyError:
-        weekly_waiver = False
-
-    data['weekly_waiver'] = weekly_waiver
-
-    try:
-        monitor_report = utils.str_to_bool(os.environ["MONITOR_REPORT"])
-    except KeyError:
-        monitor_report = False
-
-    data['monitor_report'] = monitor_report
-
-    str_limit = 40000 # slack char limit
-
-    try:
-        bot_id = os.environ["BOT_ID"]
+    bot_id = os.environ.get("BOT_ID", "1")
+    if bot_id != "1":
         str_limit = 1000
-    except KeyError:
-        bot_id = 1
 
-    try:
-        slack_webhook_url = os.environ["SLACK_WEBHOOK_URL"]
-    except KeyError:
-        slack_webhook_url = 1
-
-    try:
-        discord_webhook_url = os.environ["DISCORD_WEBHOOK_URL"]
+    slack_webhook_url = os.environ.get("SLACK_WEBHOOK_URL", "1")
+    discord_webhook_url = os.environ.get("DISCORD_WEBHOOK_URL", "1")
+    if discord_webhook_url != "1":
         str_limit = 3000
-    except KeyError:
-        discord_webhook_url = 1
 
-    if (len(str(bot_id)) <= 1 and
-        len(str(slack_webhook_url)) <= 1 and
-            len(str(discord_webhook_url)) <= 1):
-        # Ensure that there's info for at least one messaging platform,
-        # use length of str in case of blank but non null env variable
-        raise Exception("No messaging platform info provided. Be sure one of BOT_ID, SLACK_WEBHOOK_URL, or DISCORD_WEBHOOK_URL env variables are set")
+    if len(bot_id) <= 1 and len(slack_webhook_url) <= 1 and len(discord_webhook_url) <= 1:
+        raise Exception(
+            "No messaging platform info provided. Be sure one of "
+            "BOT_ID, SLACK_WEBHOOK_URL, or DISCORD_WEBHOOK_URL env variables are set"
+        )
 
     data['str_limit'] = str_limit
     data['bot_id'] = bot_id
     data['slack_webhook_url'] = slack_webhook_url
     data['discord_webhook_url'] = discord_webhook_url
 
-    data['league_id'] = os.environ["LEAGUE_ID"]
-    
-    try:
-        league_name = os.environ['LEAGUE_NAME']
-    except KeyError:
-        league_name = 'colleagues'
-        
-    data['league_name'] = league_name
+    provider = os.environ.get("PROVIDER", "espn").lower()
+    if provider not in ("espn", "sleeper"):
+        raise Exception(f"Unknown PROVIDER '{provider}'; expected 'espn' or 'sleeper'")
+    data['provider'] = provider
 
-    try:
-        year = int(os.environ["LEAGUE_YEAR"])
-    except KeyError:
-        year = 2024
+    league_id = os.environ.get("LEAGUE_ID", "")
+    sleeper_league_id = os.environ.get("SLEEPER_LEAGUE_ID", "")
+    if provider == "espn" and not league_id:
+        raise Exception("PROVIDER=espn requires the LEAGUE_ID env variable")
+    if provider == "sleeper" and not sleeper_league_id:
+        raise Exception("PROVIDER=sleeper requires the SLEEPER_LEAGUE_ID env variable")
+    data['league_id'] = league_id
+    data['sleeper_league_id'] = sleeper_league_id
 
-    data['year'] = year
+    data['league_name'] = os.environ.get("LEAGUE_NAME", "colleagues")
+    data['year'] = int(os.environ.get("LEAGUE_YEAR", 2023))
 
-    try:
-        swid = os.environ["SWID"]
-    except KeyError:
-        swid = '{1}'
-
-    if swid.find("{", 0) == -1:
+    # ESPN's SWID cookie is expected wrapped in braces; add them if the user omitted them.
+    swid = os.environ.get("SWID", "{1}")
+    if not swid.startswith("{"):
         swid = "{" + swid
-    if swid.find("}", -1) == -1:
+    if not swid.endswith("}"):
         swid = swid + "}"
-
     data['swid'] = swid
 
-    try:
-        espn_s2 = os.environ["ESPN_S2"]
-    except KeyError:
-        espn_s2 = '1'
-
-    data['espn_s2'] = espn_s2
-
-    try:
-        test = utils.str_to_bool(os.environ["TEST"])
-    except KeyError:
-        test = False
-
-    data['test'] = test
-
-    try:
-        top_half_scoring = utils.str_to_bool(os.environ["TOP_HALF_SCORING"])
-    except KeyError:
-        top_half_scoring = False
-
-    data['top_half_scoring'] = top_half_scoring
-
-    try:
-        random_phrase = utils.str_to_bool(os.environ["RANDOM_PHRASE"])
-    except KeyError:
-        random_phrase = False
-
-    data['random_phrase'] = random_phrase
-
-    try:
-        waiver_report = utils.str_to_bool(os.environ["WAIVER_REPORT"])
-    except KeyError:
-        waiver_report = False
-
-    data['waiver_report'] = waiver_report
-
-    try:
-        data['init_msg'] = os.environ["INIT_MSG"]
-    except KeyError:
-        # do nothing here, empty init message
-        pass
+    data['espn_s2'] = os.environ.get("ESPN_S2", "1")
+    data['test'] = utils.str_to_bool(os.environ.get("TEST", "false"))
+    data['top_half_scoring'] = utils.str_to_bool(os.environ.get("TOP_HALF_SCORING", "false"))
+    data['random_phrase'] = utils.str_to_bool(os.environ.get("RANDOM_PHRASE", "false"))
+    data['waiver_report'] = utils.str_to_bool(os.environ.get("WAIVER_REPORT", "false"))
+    data['init_msg'] = os.environ.get("INIT_MSG", "")
 
     return data
