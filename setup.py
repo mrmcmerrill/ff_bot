@@ -10,7 +10,7 @@ setup(
     # Ship the frozen season snapshots so all-time reports work from an installed package.
     package_data={'ff_bot': ['data/*/*.json']},
 
-    version='1.3.0',
+    version='2.0.0',
 
     description='Fantasy Football Chat Bot (ESPN & Sleeper)',
 
@@ -20,7 +20,7 @@ setup(
 
     install_requires=[
         'requests>=2.0.0,<3.0.0',
-        'espn_api>=0.39.0,<1.0.0',
+        'espn_api>=0.46.0,<1.0.0',
         'apscheduler>=3.3.0,<4.0.0',
     ],
 
