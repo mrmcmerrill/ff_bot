@@ -46,7 +46,9 @@ def get_env_vars():
     data['slack_webhook_url'] = slack_webhook_url
     data['discord_webhook_url'] = discord_webhook_url
 
-    provider = os.environ.get("PROVIDER", "espn").lower()
+    # `or "espn"` (not a .get default) so an empty PROVIDER="" — which the deploy script
+    # passes for leagues that don't set one — still falls back to the default.
+    provider = (os.environ.get("PROVIDER") or "espn").lower()
     if provider not in ("espn", "sleeper"):
         raise Exception(f"Unknown PROVIDER '{provider}'; expected 'espn' or 'sleeper'")
     data['provider'] = provider
