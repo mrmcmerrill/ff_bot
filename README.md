@@ -17,9 +17,11 @@ Like the bot? Star the repository and consider making a donation to buy me a cof
 * DOGE: D6n2g2KGdqEwR4MhhT7uAdvZFaTwqwd6rS
 * Venmo: @dtcarls
 
-# ESPN Fantasy Football GroupMe Slack and Discord Chat Bot
+# ESPN & Sleeper Fantasy Football GroupMe, Slack, and Discord Chat Bot
 
-This repository runs a GroupMe, Discord, or Slack chat bot to send ESPN Fantasy Football information to a GroupMe, Discord or Slack chat room.
+This repository runs a GroupMe, Discord, or Slack chat bot to send Fantasy Football information to a GroupMe, Discord or Slack chat room. It supports leagues hosted on **ESPN** or **Sleeper**, selected per league with the `PROVIDER` environment variable.
+
+In addition to the weekly reports below, it can produce **all-time (year-over-year)** leaderboards — All-Time Power Rankings and All-Time Expected Wins — spanning your league's full history, even across a mid-life migration from ESPN to Sleeper. See [Historical Data & All-Time Reports](#historical-data--all-time-reports).
 
 **What does this do?**
 
@@ -44,6 +46,8 @@ Table of Contents
      * [Slack setup](#slack-setup)
      * [Discord setup](#discord-setup)
      * [Private Leagues](#private-leagues)
+  * [Provider Selection (ESPN or Sleeper)](#provider-selection-espn-or-sleeper)
+  * [Historical Data & All-Time Reports](#historical-data--all-time-reports)
   * [Troubleshooting / FAQ](#troubleshooting--faq)
   * [Getting Started for development and testing](#getting-started-for-development-and-testing)
      * [Installing for development](#installing-for-development)
@@ -160,6 +164,40 @@ From there click Application on the top bar.
 On the left under Storage section click Cookies then http://fantasy.espn.com.
 From there you should be able to find your swid and espn_s2 variables and values.
 
+## Provider Selection (ESPN or Sleeper)
+
+Each league is hosted on one platform for its current season. Set `PROVIDER` to tell the bot which one:
+
+| PROVIDER | Required id | Credentials |
+|----------|-------------|-------------|
+| `espn` (default) | `LEAGUE_ID` | `SWID` + `ESPN_S2` for private leagues / waivers |
+| `sleeper` | `SLEEPER_LEAGUE_ID` | None — Sleeper's API is public and read-only |
+
+Your Sleeper league id is the number in the league URL, e.g. `https://sleeper.com/leagues/`**`1254271273962319872`**`/league`.
+
+**Sleeper notes / differences from ESPN:**
+- No credentials are needed — the Sleeper API requires no login.
+- Player names, positions, and injury status are resolved from Sleeper's global player map, which is fetched at most once per day and cached.
+- Projections are **not** available from Sleeper's public API, so the projected scoreboard and the "overachiever/underachiever" trophy are omitted for Sleeper leagues.
+- The Players-to-Monitor report is an injury watch only (Sleeper doesn't expose whether a player has already played), and close-scores can't be limited to games still in progress.
+- Power Rankings use this project's own computed metric (see the FAQ) since Sleeper has no equivalent.
+
+## Historical Data & All-Time Reports
+
+Completed seasons never change, so the bot stores each finished season as a small provider-agnostic JSON snapshot under `ff_bot/data/<league_name>/<year>.json` and reads all-time reports from disk. The live API is only ever queried for the current, in-progress season. This makes the year-over-year reports fast, credential-free, and able to span both the ESPN and Sleeper eras of a league.
+
+**Freezing history (a one-time backfill, then once per year after each season ends):**
+
+```bash
+# ESPN seasons (reads LEAGUE_ID / SWID / ESPN_S2 from the environment)
+python scripts/snapshot_espn_history.py --league <league_name> --start 2019 --end 2024
+
+# Sleeper seasons (walks previous_league_id, freezes only completed seasons)
+python scripts/snapshot_sleeper_history.py --league <league_name> --league-id <latest_sleeper_id>
+```
+
+**Owner identity across seasons:** ESPN snapshots key owners by ESPN's stable account id, which survives name changes and team turnover automatically. For a league that migrated between platforms, an optional `ff_bot/data/<league_name>/owners.json` crosswalk maps each person's ESPN name to their Sleeper display name so the all-time totals combine correctly. A single-platform league needs no crosswalk. Enable the reports with `YOY=True`.
+
 ## Troubleshooting / FAQ
 
 **League must be full.**
@@ -168,10 +206,13 @@ The bot isn't working
 Did you miss a step in the instructions? Try doing it from scratch again. If still no luck, open an issue (https://github.com/dtcarls/fantasy_football_chat_bot/issues) or hop into the discord (link at the top of readme) so the answer can be shared with others.
 
 How are power ranks calculated?
-They are calculated using 2 step dominance, as well as a combination of points scored and margin of victory. Weighted 80/15/5 respectively. I wouldn't so much pay attention to the actual number but more of the gap between teams. Full source of the calculations can be seen here: https://github.com/cwendt94/espn-api/pull/12/files. If you want a tutorial on dominance matrices: https://www.youtube.com/watch?v=784TmwaHPOw
+They are calculated using 2 step dominance, as well as a combination of points scored and margin of victory. Weighted 80/15/5 respectively. I wouldn't so much pay attention to the actual number but more of the gap between teams. The calculation lives in `ff_bot/common/power_rankings.py` and runs identically for ESPN and Sleeper leagues (head-to-head results feed the dominance matrix). If you want a tutorial on dominance matrices: https://www.youtube.com/watch?v=784TmwaHPOw
+
+Is there a version of this for Sleeper?
+Yes — set `PROVIDER=sleeper` and `SLEEPER_LEAGUE_ID`. See [Provider Selection](#provider-selection-espn-or-sleeper).
 
 Is there a version of this for Yahoo/CBS/NFL/[insert other site]?
-No, this would require a significant rework for other sites.
+Not currently. ESPN and Sleeper are supported; other sites would require adding a new provider module.
 
 I'm not getting the init message
 Are you sure you flipped the switch in Heroku to activate the worker (the toggle should be blue)? The other common mistake is misconfigured environment variables.
@@ -253,7 +294,9 @@ localhost$ docker build -t ff_bot:test .
 |BOT_ID|String|For GroupMe|None|This is your Bot ID from the GroupMe developers page|
 |SLACK_WEBHOOK_URL|String|For Slack|None|This is your Webhook URL from the Slack App page|
 |DISCORD_WEBHOOK_URL|This is your Webhook URL from the Discord Settings page|For Discord|None|
-|LEAGUE_ID|String|Yes|None|This is your ESPN league id|
+|PROVIDER|String|No|espn|Platform the current season runs on: `espn` or `sleeper`|
+|LEAGUE_ID|String|For ESPN|None|This is your ESPN league id (required when `PROVIDER=espn`)|
+|SLEEPER_LEAGUE_ID|String|For Sleeper|None|This is your Sleeper league id (required when `PROVIDER=sleeper`)|
 |START_DATE|Date|Yes|Start of current season (YYYY-MM-DD)|This is when the bot will start paying attention and sending messages to your chat.|
 |END_DATE|Date|Yes|End of current season (YYYY-MM-DD)|This is when the bot will stop paying attention and stop sending messages to your chat.|
 |LEAGUE_YEAR|String|Yes|Currernt Year (YYYY)|ESPN League year to look at|
@@ -268,8 +311,7 @@ localhost$ docker build -t ff_bot:test .
 |DAILY_WAIVER|Bool|No|False|If set to True, will provide a waiver report of add/drops daily. :warning: ESPN_S2 and SWID are required for this to work :warning:|
 |ESPN_S2|String|For WAIVER/YOY/Private leagues|None|Used for private leagues. See [Private Leagues Section](#private-leagues) for documentation|
 |SWID|String|For WAIVER/YOY/Private leagues|None|Used for private leagues. (Can be defined with or without {}) See [Private Leagues Section](#private-leagues) for documentation|
-|YOY|Bool|No|False|Used if you want to enable the YOY statistics to including previous years, like YOY Expected Wins or YOY Power Rankings :warning: ESPN_S2 and SWID are required for these to work :warning:
-|LEAGUE_START_YEAR|String|For YOY|2019 (YYYY)|Used for YOY start year. When was the first year of the league. Expected Wins only works back to 2019 due to ESPN api not exposing box scores until then.|
+|YOY|Bool|No|False|Enables the all-time (year-over-year) reports — All-Time Expected Wins and All-Time Power Rankings. These read frozen season snapshots from disk, so no credentials are needed at report time. See [Historical Data & All-Time Reports](#historical-data--all-time-reports) for the one-time backfill.|
 
 ### Running with Docker
 
