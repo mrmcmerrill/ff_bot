@@ -1,1 +1,1 @@
-worker: python3 ff_bot/ff_bot.py
+worker: python3 -m ff_bot.espn.espn_bot

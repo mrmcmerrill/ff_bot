@@ -8,7 +8,8 @@ class SlackException(Exception):
     pass
 
 class SlackBot(object):
-    # Creates GroupMe Bot to send messages
+    """Posts messages to a Slack channel via an incoming webhook."""
+
     def __init__(self, webhook_url):
         self.webhook_url = webhook_url
 
@@ -16,7 +17,7 @@ class SlackBot(object):
         return "Slack Webhook Url(%s)" % self.webhook_url
 
     def send_message(self, text):
-        # Sends a message to the chatroom
+        """Post text (wrapped in a code block) to the webhook; no-op if none is configured."""
         message = "```{0}```".format(text)
         template = {
             "text": message #limit 40000
