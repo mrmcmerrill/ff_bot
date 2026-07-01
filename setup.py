@@ -19,13 +19,13 @@ setup(
     author_email='rmcclary.30@gmail.com',
 
     install_requires=[
-        'requests>=2.0.0,<3.0.0',
+        'requests>=2.31.0,<3.0.0',
         'espn_api>=0.46.0,<1.0.0',
-        'apscheduler>=3.3.0,<4.0.0',
+        'apscheduler>=3.10.0,<4.0.0',
     ],
 
     extras_require={
-        'test': ['pytest', 'requests_mock'],
+        'test': ['pytest>=8.0.0', 'requests_mock>=1.12.0'],
     },
 
     python_requires='>=3.9',
