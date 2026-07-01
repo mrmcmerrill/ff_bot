@@ -39,6 +39,8 @@ THIS_LEAGUE_YEAR_START="${LEAGUE_NAME}_LEAGUE_YEAR_START"
 THIS_YOY="${LEAGUE_NAME}_YOY"
 THIS_SWID="${LEAGUE_NAME}_SWID"
 THIS_ESPN_S2="${LEAGUE_NAME}_ESPN_S2"
+THIS_PROVIDER="${LEAGUE_NAME}_PROVIDER"
+THIS_SLEEPER_LEAGUE_ID="${LEAGUE_NAME}_SLEEPER_LEAGUE_ID"
 
 # Test pointer variables
 # echo $THIS_BOT_ID
@@ -67,6 +69,8 @@ sudo docker run -dit --name ${environ}-rankings-bot \
   -e "YOY=${!THIS_YOY}" \
   -e "SWID=${!THIS_SWID}" \
   -e "ESPN_S2=${!THIS_ESPN_S2}" \
+  -e "PROVIDER=${!THIS_PROVIDER}" \
+  -e "SLEEPER_LEAGUE_ID=${!THIS_SLEEPER_LEAGUE_ID}" \
 	mchome/ff_bot:$IMAGE_TAG
 
 #env
