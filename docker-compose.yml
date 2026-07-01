@@ -12,8 +12,12 @@ services:
       SLACK_WEBHOOK_URL: "1"
       #This is your Webhook URL from the Discord Settings page (REQUIRED IF USING DISCORD)
       DISCORD_WEBHOOK_URL: "1"
-      #ESPN league id (REQUIRED)
+      #Platform the current season runs on: 'espn' (default) or 'sleeper'
+      # PROVIDER: "espn"
+      #ESPN league id (REQUIRED when PROVIDER=espn)
       LEAGUE_ID:
+      #Sleeper league id (REQUIRED when PROVIDER=sleeper)
+      # SLEEPER_LEAGUE_ID:
       # #When the bot will start paying attention and sending messages to your chat.
       # START_DATE:
       # #When the bot will stop paying attention and stop sending messages to your chat.

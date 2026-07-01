@@ -5,8 +5,11 @@ import ff_bot.utils as utils
 def get_env_vars():
     """Read all bot configuration from environment variables into a single dict.
 
-    Every setting has a sensible default except LEAGUE_ID, which is required. The
-    str_limit is tuned to the active messaging platform (GroupMe 1000, Discord 3000,
+    PROVIDER ('espn' or 'sleeper', default 'espn') selects which platform the current
+    live season runs on. An ESPN league requires LEAGUE_ID; a Sleeper league requires
+    SLEEPER_LEAGUE_ID. (All-time reports read frozen snapshots regardless of provider.)
+
+    The str_limit is tuned to the active messaging platform (GroupMe 1000, Discord 3000,
     Slack 40000), and at least one of BOT_ID, SLACK_WEBHOOK_URL, or DISCORD_WEBHOOK_URL
     must be set or an exception is raised.
     """
@@ -42,7 +45,21 @@ def get_env_vars():
     data['bot_id'] = bot_id
     data['slack_webhook_url'] = slack_webhook_url
     data['discord_webhook_url'] = discord_webhook_url
-    data['league_id'] = os.environ["LEAGUE_ID"]
+
+    provider = os.environ.get("PROVIDER", "espn").lower()
+    if provider not in ("espn", "sleeper"):
+        raise Exception(f"Unknown PROVIDER '{provider}'; expected 'espn' or 'sleeper'")
+    data['provider'] = provider
+
+    league_id = os.environ.get("LEAGUE_ID", "")
+    sleeper_league_id = os.environ.get("SLEEPER_LEAGUE_ID", "")
+    if provider == "espn" and not league_id:
+        raise Exception("PROVIDER=espn requires the LEAGUE_ID env variable")
+    if provider == "sleeper" and not sleeper_league_id:
+        raise Exception("PROVIDER=sleeper requires the SLEEPER_LEAGUE_ID env variable")
+    data['league_id'] = league_id
+    data['sleeper_league_id'] = sleeper_league_id
+
     data['league_name'] = os.environ.get("LEAGUE_NAME", "colleagues")
     data['year'] = int(os.environ.get("LEAGUE_YEAR", 2023))
 
