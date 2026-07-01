@@ -1,0 +1,590 @@
+{
+  "season": 2021,
+  "provider": "espn",
+  "league_id": 1071321,
+  "regular_season_weeks": 15,
+  "teams": {
+    "1": {
+      "owner": "Fulton Skrobarczyk",
+      "owner_id": "{2A04F41A-84F7-47F6-B6FD-955CE781281E}",
+      "team_name": "Bishop  Sycamore",
+      "team_abbrev": "DOGE",
+      "wins": 6,
+      "losses": 9,
+      "ties": 0,
+      "points_for": 1746.32
+    },
+    "5": {
+      "owner": "Alex Dragt",
+      "owner_id": "{F39C481C-4CEA-448C-9C48-1C4CEA648C1F}",
+      "team_name": "Big Country",
+      "team_abbrev": "BFE",
+      "wins": 11,
+      "losses": 4,
+      "ties": 0,
+      "points_for": 1678.72
+    },
+    "8": {
+      "owner": "Dustin Miller",
+      "owner_id": "{9DE6EC6E-43E4-4835-A559-9566F3A96AA1}",
+      "team_name": "FLEX ON EM  #3",
+      "team_abbrev": "RAGE",
+      "wins": 8,
+      "losses": 7,
+      "ties": 0,
+      "points_for": 1882.26
+    },
+    "17": {
+      "owner": "adam dragt",
+      "owner_id": "{4DA64775-557D-4212-A647-75557DB212B9}",
+      "team_name": "Skeeter on my peter",
+      "team_abbrev": "Dank",
+      "wins": 3,
+      "losses": 12,
+      "ties": 0,
+      "points_for": 1436.56
+    },
+    "19": {
+      "owner": "matt burgoon",
+      "owner_id": "{6BB79917-E186-4EFF-846C-579B0DC29B1D}",
+      "team_name": "Fresh legs Ox year",
+      "team_abbrev": "Ox ",
+      "wins": 8,
+      "losses": 7,
+      "ties": 0,
+      "points_for": 1566.54
+    },
+    "21": {
+      "owner": "Robert McClary",
+      "owner_id": "{7CF4EB1C-AA24-4483-8DFB-D29E11D6E7BB}",
+      "team_name": "sudo apt-get install champ",
+      "team_abbrev": "SUDO",
+      "wins": 8,
+      "losses": 7,
+      "ties": 0,
+      "points_for": 1726.6
+    },
+    "22": {
+      "owner": "Jae Williams",
+      "owner_id": "{2192A6D3-965D-4DC9-B0EF-E30112E716CF}",
+      "team_name": "Godon 93 ROTY",
+      "team_abbrev": "JEFF",
+      "wins": 13,
+      "losses": 2,
+      "ties": 0,
+      "points_for": 1961.96
+    },
+    "23": {
+      "owner": "Nick Troutman",
+      "owner_id": "{CD6D49E3-FBDC-494C-9D53-2BF2FBF67A9B}",
+      "team_name": "Los Pollards Hermanos",
+      "team_abbrev": "LPH",
+      "wins": 3,
+      "losses": 12,
+      "ties": 0,
+      "points_for": 1508.98
+    },
+    "24": {
+      "owner": "Matt Scot",
+      "owner_id": "{3EF1AD50-BEE5-48CC-A741-C5E88AB1AD09}",
+      "team_name": "Mack Daddy Mack Daddy",
+      "team_abbrev": "MD",
+      "wins": 8,
+      "losses": 7,
+      "ties": 0,
+      "points_for": 1844.86
+    },
+    "25": {
+      "owner": "Austin Davis",
+      "owner_id": "{022A2605-9690-4855-AA26-05969098557A}",
+      "team_name": "Bobby Boucher",
+      "team_abbrev": "Agua",
+      "wins": 7,
+      "losses": 8,
+      "ties": 0,
+      "points_for": 1674.06
+    }
+  },
+  "matchups": {
+    "1": [
+      {
+        "home": "24",
+        "home_score": 163.58,
+        "away": "1",
+        "away_score": 137.06
+      },
+      {
+        "home": "23",
+        "home_score": 72.8,
+        "away": "19",
+        "away_score": 79.58
+      },
+      {
+        "home": "17",
+        "home_score": 67.54,
+        "away": "22",
+        "away_score": 134.9
+      },
+      {
+        "home": "25",
+        "home_score": 164.76,
+        "away": "8",
+        "away_score": 141.56
+      },
+      {
+        "home": "21",
+        "home_score": 118.06,
+        "away": "5",
+        "away_score": 82.82
+      }
+    ],
+    "2": [
+      {
+        "home": "1",
+        "home_score": 82.28,
+        "away": "19",
+        "away_score": 99.04
+      },
+      {
+        "home": "22",
+        "home_score": 160.36,
+        "away": "24",
+        "away_score": 143.82
+      },
+      {
+        "home": "8",
+        "home_score": 128.44,
+        "away": "23",
+        "away_score": 114.96
+      },
+      {
+        "home": "5",
+        "home_score": 131.42,
+        "away": "17",
+        "away_score": 110.72
+      },
+      {
+        "home": "21",
+        "home_score": 135.2,
+        "away": "25",
+        "away_score": 115.42
+      }
+    ],
+    "3": [
+      {
+        "home": "22",
+        "home_score": 161.52,
+        "away": "1",
+        "away_score": 131.02
+      },
+      {
+        "home": "19",
+        "home_score": 119.34,
+        "away": "8",
+        "away_score": 109.04
+      },
+      {
+        "home": "24",
+        "home_score": 88.4,
+        "away": "5",
+        "away_score": 105.02
+      },
+      {
+        "home": "23",
+        "home_score": 116.28,
+        "away": "21",
+        "away_score": 125.94
+      },
+      {
+        "home": "17",
+        "home_score": 107.74,
+        "away": "25",
+        "away_score": 65.82
+      }
+    ],
+    "4": [
+      {
+        "home": "1",
+        "home_score": 113.72,
+        "away": "8",
+        "away_score": 115.56
+      },
+      {
+        "home": "5",
+        "home_score": 127.0,
+        "away": "22",
+        "away_score": 121.22
+      },
+      {
+        "home": "21",
+        "home_score": 110.42,
+        "away": "19",
+        "away_score": 101.42
+      },
+      {
+        "home": "25",
+        "home_score": 97.66,
+        "away": "24",
+        "away_score": 160.52
+      },
+      {
+        "home": "17",
+        "home_score": 81.4,
+        "away": "23",
+        "away_score": 111.94
+      }
+    ],
+    "5": [
+      {
+        "home": "5",
+        "home_score": 111.1,
+        "away": "1",
+        "away_score": 123.58
+      },
+      {
+        "home": "8",
+        "home_score": 121.74,
+        "away": "21",
+        "away_score": 155.66
+      },
+      {
+        "home": "22",
+        "home_score": 126.9,
+        "away": "25",
+        "away_score": 90.28
+      },
+      {
+        "home": "19",
+        "home_score": 104.9,
+        "away": "17",
+        "away_score": 121.32
+      },
+      {
+        "home": "24",
+        "home_score": 157.48,
+        "away": "23",
+        "away_score": 192.78
+      }
+    ],
+    "6": [
+      {
+        "home": "1",
+        "home_score": 127.8,
+        "away": "21",
+        "away_score": 102.36
+      },
+      {
+        "home": "25",
+        "home_score": 96.44,
+        "away": "5",
+        "away_score": 125.44
+      },
+      {
+        "home": "17",
+        "home_score": 94.66,
+        "away": "8",
+        "away_score": 125.18
+      },
+      {
+        "home": "23",
+        "home_score": 95.28,
+        "away": "22",
+        "away_score": 180.02
+      },
+      {
+        "home": "24",
+        "home_score": 140.38,
+        "away": "19",
+        "away_score": 113.06
+      }
+    ],
+    "7": [
+      {
+        "home": "25",
+        "home_score": 141.02,
+        "away": "1",
+        "away_score": 122.44
+      },
+      {
+        "home": "21",
+        "home_score": 149.64,
+        "away": "17",
+        "away_score": 124.88
+      },
+      {
+        "home": "5",
+        "home_score": 127.66,
+        "away": "23",
+        "away_score": 91.48
+      },
+      {
+        "home": "8",
+        "home_score": 147.44,
+        "away": "24",
+        "away_score": 64.14
+      },
+      {
+        "home": "22",
+        "home_score": 122.3,
+        "away": "19",
+        "away_score": 100.34
+      }
+    ],
+    "8": [
+      {
+        "home": "1",
+        "home_score": 108.06,
+        "away": "17",
+        "away_score": 104.66
+      },
+      {
+        "home": "23",
+        "home_score": 53.72,
+        "away": "25",
+        "away_score": 117.42
+      },
+      {
+        "home": "24",
+        "home_score": 96.2,
+        "away": "21",
+        "away_score": 69.16
+      },
+      {
+        "home": "19",
+        "home_score": 119.48,
+        "away": "5",
+        "away_score": 101.2
+      },
+      {
+        "home": "22",
+        "home_score": 143.36,
+        "away": "8",
+        "away_score": 118.8
+      }
+    ],
+    "9": [
+      {
+        "home": "23",
+        "home_score": 88.04,
+        "away": "1",
+        "away_score": 97.88
+      },
+      {
+        "home": "17",
+        "home_score": 104.98,
+        "away": "24",
+        "away_score": 88.64
+      },
+      {
+        "home": "25",
+        "home_score": 125.44,
+        "away": "19",
+        "away_score": 112.4
+      },
+      {
+        "home": "21",
+        "home_score": 87.18,
+        "away": "22",
+        "away_score": 101.66
+      },
+      {
+        "home": "5",
+        "home_score": 108.06,
+        "away": "8",
+        "away_score": 93.18
+      }
+    ],
+    "10": [
+      {
+        "home": "1",
+        "home_score": 143.94,
+        "away": "24",
+        "away_score": 144.34
+      },
+      {
+        "home": "19",
+        "home_score": 80.28,
+        "away": "23",
+        "away_score": 73.18
+      },
+      {
+        "home": "22",
+        "home_score": 114.84,
+        "away": "17",
+        "away_score": 53.2
+      },
+      {
+        "home": "8",
+        "home_score": 104.3,
+        "away": "25",
+        "away_score": 122.34
+      },
+      {
+        "home": "5",
+        "home_score": 104.12,
+        "away": "21",
+        "away_score": 102.18
+      }
+    ],
+    "11": [
+      {
+        "home": "19",
+        "home_score": 92.98,
+        "away": "1",
+        "away_score": 88.94
+      },
+      {
+        "home": "24",
+        "home_score": 108.1,
+        "away": "22",
+        "away_score": 113.26
+      },
+      {
+        "home": "23",
+        "home_score": 97.78,
+        "away": "8",
+        "away_score": 137.18
+      },
+      {
+        "home": "17",
+        "home_score": 67.44,
+        "away": "5",
+        "away_score": 148.96
+      },
+      {
+        "home": "25",
+        "home_score": 127.6,
+        "away": "21",
+        "away_score": 122.2
+      }
+    ],
+    "12": [
+      {
+        "home": "1",
+        "home_score": 84.46,
+        "away": "22",
+        "away_score": 119.5
+      },
+      {
+        "home": "8",
+        "home_score": 128.94,
+        "away": "19",
+        "away_score": 128.52
+      },
+      {
+        "home": "5",
+        "home_score": 124.98,
+        "away": "24",
+        "away_score": 81.08
+      },
+      {
+        "home": "21",
+        "home_score": 113.38,
+        "away": "23",
+        "away_score": 97.22
+      },
+      {
+        "home": "25",
+        "home_score": 98.9,
+        "away": "17",
+        "away_score": 94.74
+      }
+    ],
+    "13": [
+      {
+        "home": "8",
+        "home_score": 128.32,
+        "away": "1",
+        "away_score": 162.32
+      },
+      {
+        "home": "22",
+        "home_score": 99.9,
+        "away": "5",
+        "away_score": 100.5
+      },
+      {
+        "home": "19",
+        "home_score": 132.34,
+        "away": "21",
+        "away_score": 107.92
+      },
+      {
+        "home": "24",
+        "home_score": 133.36,
+        "away": "25",
+        "away_score": 93.8
+      },
+      {
+        "home": "23",
+        "home_score": 100.48,
+        "away": "17",
+        "away_score": 98.52
+      }
+    ],
+    "14": [
+      {
+        "home": "1",
+        "home_score": 141.54,
+        "away": "5",
+        "away_score": 84.58
+      },
+      {
+        "home": "21",
+        "home_score": 133.52,
+        "away": "8",
+        "away_score": 173.82
+      },
+      {
+        "home": "25",
+        "home_score": 123.42,
+        "away": "22",
+        "away_score": 134.22
+      },
+      {
+        "home": "17",
+        "home_score": 106.52,
+        "away": "19",
+        "away_score": 122.1
+      },
+      {
+        "home": "23",
+        "home_score": 94.0,
+        "away": "24",
+        "away_score": 107.22
+      }
+    ],
+    "15": [
+      {
+        "home": "21",
+        "home_score": 93.78,
+        "away": "1",
+        "away_score": 81.28
+      },
+      {
+        "home": "5",
+        "home_score": 95.86,
+        "away": "25",
+        "away_score": 93.74
+      },
+      {
+        "home": "8",
+        "home_score": 108.76,
+        "away": "17",
+        "away_score": 98.24
+      },
+      {
+        "home": "22",
+        "home_score": 128.0,
+        "away": "23",
+        "away_score": 109.04
+      },
+      {
+        "home": "19",
+        "home_score": 60.76,
+        "away": "24",
+        "away_score": 167.6
+      }
+    ]
+  }
+}

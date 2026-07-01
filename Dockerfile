@@ -1,9 +1,9 @@
-FROM python:3.9.9-slim-bullseye
+FROM python:3.12-slim-bookworm
 
 # Install app
 ADD . /usr/src/ff_bot
 WORKDIR /usr/src/ff_bot
-RUN python3 setup.py install
+RUN pip install --no-cache-dir .
 
-# Launch app
-CMD ["python3", "ff_bot/espn/espn_bot.py"]
+# Launch app (run as a module so package imports resolve without a sys.path hack)
+CMD ["python3", "-m", "ff_bot.espn.espn_bot"]

@@ -9,7 +9,8 @@ class DiscordException(Exception):
     pass
 
 class DiscordBot(object):
-    # Creates Discord Bot to send messages
+    """Posts messages to a Discord channel via an incoming webhook."""
+
     def __init__(self, webhook_url):
         self.webhook_url = webhook_url
 
@@ -17,7 +18,7 @@ class DiscordBot(object):
         return "Discord Webhook Url(%s)" % self.webhook_url
 
     def send_message(self, text):
-        # Sends a message to the chatroom
+        """Post text (wrapped in a code block) to the webhook; no-op if none is configured."""
         message = "```{0}```".format(text)
         template = {
             "content": message #limit 3000 chars

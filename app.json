@@ -29,9 +29,20 @@
       "value": "1",
       "required": false
     },
+    "PROVIDER": {
+      "description": "Platform the current season runs on: 'espn' or 'sleeper'",
+      "value": "espn",
+      "required": false
+    },
     "LEAGUE_ID": {
-      "description": "ESPN League ID",
-      "value": "1"
+      "description": "ESPN League ID (required when PROVIDER=espn)",
+      "value": "1",
+      "required": false
+    },
+    "SLEEPER_LEAGUE_ID": {
+      "description": "Sleeper League ID (required when PROVIDER=sleeper)",
+      "value": "",
+      "required": false
     },
     "LEAGUE_YEAR": {
       "description": "ESPN League Year",
