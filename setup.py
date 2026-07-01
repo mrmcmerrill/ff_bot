@@ -1,25 +1,34 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='ff_bot',
 
-    packages=['ff_bot'],
+    packages=find_packages(exclude=['ff_bot.tests', 'ff_bot.tests.*']),
 
     include_package_data=True,
 
-    version='1.2.0',
+    # Ship the frozen season snapshots so all-time reports work from an installed package.
+    package_data={'ff_bot': ['data/*/*.json']},
 
-    description='Fantasy Football Chat Bot',
+    version='1.3.0',
+
+    description='Fantasy Football Chat Bot (ESPN & Sleeper)',
 
     author='Robert McClary',
 
     author_email='rmcclary.30@gmail.com',
 
-    install_requires=['requests>=2.0.0,<3.0.0', 'espn_api>=0.31.0', 'apscheduler>3.0.0,<4.0.0', 'datetime'],
+    install_requires=[
+        'requests>=2.0.0,<3.0.0',
+        'espn_api>=0.39.0,<1.0.0',
+        'apscheduler>=3.3.0,<4.0.0',
+    ],
 
-    test_suite='nose.collector',
+    extras_require={
+        'test': ['pytest', 'requests_mock'],
+    },
 
-    tests_require=['nose', 'requests_mock'],
+    python_requires='>=3.9',
 
     url='https://github.com/mrmcmerrill/ff_bot',
 
